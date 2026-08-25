@@ -34,7 +34,7 @@ export const metadata: Metadata = {
 export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
-      <body className="bg-slate-50 text-slate-900 min-h-screen antialiased selection:bg-blue-600 selection:text-white" suppressHydrationWarning>
+      <body className="bg-slate-50 text-slate-900 min-h-screen overflow-x-hidden antialiased selection:bg-blue-600 selection:text-white" suppressHydrationWarning>
         {children}
       </body>
     </html>

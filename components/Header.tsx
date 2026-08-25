@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { ShieldCheck, FileDown, Menu, X, Globe, Mail, Lock, UserCheck } from 'lucide-react';
+import { ShieldCheck, FileDown, X, Globe, Mail, Lock, UserCheck, ChevronDown, ChevronUp } from 'lucide-react';
 import { PERSONAL_INFO, I18N_STRINGS, Language } from '@/lib/portfolio-data';
 
 interface HeaderProps {
@@ -170,10 +170,11 @@ export function Header({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 text-slate-700 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold text-slate-700 bg-white hover:text-blue-600 hover:bg-slate-50 border border-slate-200 rounded-lg transition-all shadow-xs"
               aria-label="Toggle menu"
             >
-              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              <span>Menu</span>
+              {mobileMenuOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
             </button>
           </div>
         </div>
