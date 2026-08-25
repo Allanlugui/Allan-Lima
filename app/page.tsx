@@ -22,31 +22,27 @@ import {
 import { Language } from '@/lib/portfolio-data';
 
 export default function HomePage() {
-  const [currentLang, setCurrentLang] = useState<Language>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const savedLang = localStorage.getItem('allan_portfolio_lang') as Language;
-        if (savedLang && (savedLang === 'pt' || savedLang === 'en' || savedLang === 'es')) {
-          return savedLang;
-        }
-      } catch {
-        // Ignore
-      }
-    }
-    return 'pt';
-  });
-
+  const [currentLang, setCurrentLang] = useState<Language>('pt');
   const [portfolioData, setPortfolioData] = useState<PortfolioDatabase>(() => getPortfolioData());
   const [isResumeModalOpen, setIsResumeModalOpen] = useState<boolean>(false);
   const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
   const [isAdminDashboardOpen, setIsAdminDashboardOpen] = useState<boolean>(false);
-  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(() => {
-    if (typeof window !== 'undefined') {
+  const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(false);
+
+  useEffect(() => {
+    try {
+      const savedLang = localStorage.getItem('allan_portfolio_lang') as Language;
+      if (savedLang && (savedLang === 'pt' || savedLang === 'en' || savedLang === 'es')) {
+        setCurrentLang(savedLang);
+      }
       const token = localStorage.getItem(ADMIN_AUTH_TOKEN_KEY);
-      return Boolean(token && token.startsWith('admin_session_'));
+      if (token && token.startsWith('admin_session_')) {
+        setIsAdminLoggedIn(true);
+      }
+    } catch {
+      // Ignore
     }
-    return false;
-  });
+  }, []);
 
   const handleLanguageChange = (lang: Language) => {
     setCurrentLang(lang);
