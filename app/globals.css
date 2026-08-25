@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Hide standard web headers and buttons during browser print */
+  @media print {
+    body {
+      background: white !important;
+      color: black !important;
+      font-size: 11pt;
+    }
+    header, footer, #summary, #about, #experience, #projects, #diagnostic, #testimonials, #contact {
+      display: none !important;
+    }
+  }
+}
