@@ -43,7 +43,7 @@ export function Hero({ currentLang, onOpenResumeModal, personalInfo }: HeroProps
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 shadow-2xs">
                 <Zap className="w-3.5 h-3.5 text-blue-600" />
-                {currentLang === 'pt' ? 'Técnico em Eletrotécnica' : currentLang === 'es' ? 'Técnico en Electrotecnia' : 'Certified Electrotechnics'}
+                {currentLang === 'pt' ? 'Eletricista & Manutenção Generalista' : currentLang === 'es' ? 'Electricista y Mantenimiento General' : 'Electrician & Maintenance'}
               </span>
 
               <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200 shadow-2xs">
@@ -178,14 +178,14 @@ export function Hero({ currentLang, onOpenResumeModal, personalInfo }: HeroProps
                   </div>
                   <div className="text-xs">
                     <div className="font-bold text-slate-900">
-                      {currentLang === 'pt' ? 'Curso Técnico em Eletrotécnica' : currentLang === 'es' ? 'Curso Técnico en Electrotecnia' : 'Technical Course in Electrotechnics'}
+                      {currentLang === 'pt' ? 'Eletricista Instalador Residencial' : currentLang === 'es' ? 'Electricista Instalador Residencial' : 'Residential Electrical Installer'}
                     </div>
                     <div className="text-slate-600 mt-0.5 leading-snug">
                       {currentLang === 'pt'
-                        ? 'Projetos elétricos, cálculos de demanda, comandos e máquinas rotativas'
+                        ? 'Instalações elétricas, quadros de distribuição, comandos e normas NR-10/NR-35'
                         : currentLang === 'es'
-                        ? 'Diseño eléctrico, cálculo de demanda, cuadros y máquinas rotativas'
-                        : 'Power distribution, wire sizing, motor control, and single-line schematics'}
+                        ? 'Instalaciones eléctricas, tableros, mandos y normas NR-10/NR-35'
+                        : 'Electrical installations, distribution boards, and safety compliance'}
                     </div>
                   </div>
                 </div>
