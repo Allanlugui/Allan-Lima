@@ -19,6 +19,7 @@ import { QuickPhotoUploadModal } from '@/components/QuickPhotoUploadModal';
 import {
   PortfolioDatabase,
   getPortfolioData,
+  DEFAULT_PORTFOLIO_DATA,
   ADMIN_AUTH_TOKEN_KEY,
 } from '@/lib/portfolio-store';
 import { Language } from '@/lib/portfolio-data';
@@ -26,7 +27,7 @@ import { Language } from '@/lib/portfolio-data';
 export default function HomePage() {
   const [currentLang, setCurrentLang] = useState<Language>('pt');
   const [currentTrack, setCurrentTrack] = useState<TrackType>('all');
-  const [portfolioData, setPortfolioData] = useState<PortfolioDatabase>(() => getPortfolioData());
+  const [portfolioData, setPortfolioData] = useState<PortfolioDatabase>(DEFAULT_PORTFOLIO_DATA);
   const [isResumeModalOpen, setIsResumeModalOpen] = useState<boolean>(false);
   const [resumeModalTrack, setResumeModalTrack] = useState<TrackType>('all');
   const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
@@ -37,6 +38,12 @@ export default function HomePage() {
   /* eslint-disable */
   useEffect(() => {
     try {
+      setPortfolioData(getPortfolioData());
+      const handleDataUpdate = () => {
+        setPortfolioData(getPortfolioData());
+      };
+      window.addEventListener('portfolio-data-updated', handleDataUpdate);
+
       const savedLang = localStorage.getItem('allan_portfolio_lang') as Language;
       if (savedLang && (savedLang === 'pt' || savedLang === 'en' || savedLang === 'es')) {
         setCurrentLang(savedLang);
@@ -49,6 +56,9 @@ export default function HomePage() {
       if (token && token.startsWith('admin_session_')) {
         setIsAdminLoggedIn(true);
       }
+      return () => {
+        window.removeEventListener('portfolio-data-updated', handleDataUpdate);
+      };
     } catch {
       // Ignore
     }

@@ -346,3 +346,47 @@ export async function uploadImageToGoogleDrive(
     size: blob.size,
   };
 }
+
+/**
+ * Deletes a file from Google Drive given its file ID or Google Drive URL
+ */
+export async function deleteFileFromGoogleDrive(fileUrlOrId: string): Promise<boolean> {
+  if (!fileUrlOrId) return false;
+
+  let fileId = fileUrlOrId;
+  if (fileUrlOrId.includes('googleusercontent.com/d/')) {
+    const match = fileUrlOrId.match(/\/d\/([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+      fileId = match[1];
+    }
+  } else if (fileUrlOrId.includes('id=')) {
+    const match = fileUrlOrId.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+    if (match && match[1]) {
+      fileId = match[1];
+    }
+  }
+
+  if (!fileId || fileId.startsWith('http') || fileId.length < 10) {
+    return false;
+  }
+
+  const token = getCachedDriveToken();
+  if (!token) {
+    return false;
+  }
+
+  try {
+    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    return res.ok || res.status === 404;
+  } catch (err) {
+    console.warn('Failed to delete file from Google Drive:', err);
+    return false;
+  }
+}
+

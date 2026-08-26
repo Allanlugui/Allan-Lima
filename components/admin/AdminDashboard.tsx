@@ -41,6 +41,7 @@ import {
 } from '@/lib/portfolio-store';
 import { Language } from '@/lib/portfolio-data';
 import { GoogleDriveImageUpload } from '@/components/GoogleDriveImageUpload';
+import { deleteFileFromGoogleDrive } from '@/lib/google-drive';
 
 interface AdminDashboardProps {
   initialData: PortfolioDatabase;
@@ -106,10 +107,18 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
     setEditingFieldActivity(null);
   };
 
-  const handleDeleteFieldActivity = (id: string) => {
-    if (confirm('Tem certeza de que deseja excluir este registro fotográfico de campo?')) {
+  const handleDeleteFieldActivity = async (id: string) => {
+    const itemToDelete = (data.fieldActivities || []).find((item) => item.id === id);
+    if (confirm('Tem certeza de que deseja excluir este registro fotográfico de campo e apagar a foto correspondente do Google Drive?')) {
+      if (itemToDelete?.image) {
+        try {
+          await deleteFileFromGoogleDrive(itemToDelete.image);
+        } catch (err) {
+          console.warn('Could not delete file from Google Drive:', err);
+        }
+      }
       const updated = (data.fieldActivities || []).filter((item) => item.id !== id);
-      persistChanges({ ...data, fieldActivities: updated }, 'Registro de campo removido.');
+      persistChanges({ ...data, fieldActivities: updated }, 'Registro de campo e arquivo do Google Drive removidos com sucesso.');
     }
   };
 
