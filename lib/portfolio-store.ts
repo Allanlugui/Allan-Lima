@@ -1,4 +1,4 @@
-import { Language, PROJECTS } from './portfolio-data';
+import { Language, PROJECTS, EDUCATION, EducationItem, PROFESSIONAL_REFERENCES, ProfessionalReferenceItem } from './portfolio-data';
 
 export interface FieldActivityItem {
   id: string;
@@ -110,6 +110,8 @@ export interface PortfolioDatabase {
   skillsMatrix: SkillCategory[];
   certifications: CertificationItem[];
   blogPosts: BlogPostItem[];
+  education: EducationItem[];
+  references: ProfessionalReferenceItem[];
   lastUpdated: string;
 }
 
@@ -1070,6 +1072,8 @@ Zero acidentes não é sorte; é método.`,
       published: true,
     },
   ],
+  education: EDUCATION,
+  references: PROFESSIONAL_REFERENCES,
   lastUpdated: '2026-08-24T16:20:00Z',
 };
 
@@ -1091,6 +1095,8 @@ export function getPortfolioData(): PortfolioDatabase {
           experiences: parsed.experiences && parsed.experiences.length > 0 ? parsed.experiences : DEFAULT_PORTFOLIO_DATA.experiences,
           certifications: parsed.certifications && parsed.certifications.length > 0 ? parsed.certifications : DEFAULT_PORTFOLIO_DATA.certifications,
           skillsMatrix: parsed.skillsMatrix && parsed.skillsMatrix.length > 0 ? parsed.skillsMatrix : DEFAULT_PORTFOLIO_DATA.skillsMatrix,
+          education: parsed.education && parsed.education.length > 0 ? parsed.education : DEFAULT_PORTFOLIO_DATA.education,
+          references: parsed.references && parsed.references.length > 0 ? parsed.references : DEFAULT_PORTFOLIO_DATA.references,
         };
       }
     } catch (e) {
@@ -1107,6 +1113,15 @@ export function savePortfolioData(data: PortfolioDatabase): void {
       localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(data));
       // Dispatch custom event for immediate reactive re-renders across components
       window.dispatchEvent(new Event('portfolio-data-updated'));
+
+      // Also persist asynchronously to Firebase Firestore cloud database
+      import('./firebase').then(({ savePortfolioToFirestore }) => {
+        savePortfolioToFirestore(data).catch((err) => {
+          console.warn('Firestore cloud sync notice:', err);
+        });
+      }).catch((err) => {
+        console.warn('Could not load Firebase module for sync:', err);
+      });
     } catch (e) {
       console.error('Error saving portfolio data to local cache:', e);
     }

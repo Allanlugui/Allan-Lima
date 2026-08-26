@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import {
   EDUCATION,
+  EducationItem,
   I18N_STRINGS,
   Language,
 } from '@/lib/portfolio-data';
@@ -24,10 +25,12 @@ interface AboutProps {
   currentLang: Language;
   certifications?: CertificationItem[];
   skillsMatrix?: SkillCategory[];
+  education?: EducationItem[];
 }
 
-export function AboutAndQualifications({ currentLang, certifications, skillsMatrix }: AboutProps) {
+export function AboutAndQualifications({ currentLang, certifications, skillsMatrix, education }: AboutProps) {
   const t = I18N_STRINGS[currentLang];
+  const educationList = education && education.length > 0 ? education : EDUCATION;
 
   const getCertIcon = (iconName: string) => {
     switch (iconName) {
@@ -127,7 +130,7 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
             </h3>
 
             <div className="space-y-3.5">
-              {EDUCATION.map((edu, eIdx) => (
+              {educationList.map((edu, eIdx) => (
                 <div
                   key={edu.id}
                   className={`p-4 sm:p-5 rounded-2xl bg-slate-50 border ${

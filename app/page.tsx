@@ -21,7 +21,9 @@ import {
   getPortfolioData,
   DEFAULT_PORTFOLIO_DATA,
   ADMIN_AUTH_TOKEN_KEY,
+  LOCAL_STORAGE_KEY,
 } from '@/lib/portfolio-store';
+import { subscribeToPortfolioFirestore } from '@/lib/firebase';
 import { Language } from '@/lib/portfolio-data';
 
 export default function HomePage() {
@@ -37,12 +39,25 @@ export default function HomePage() {
 
   /* eslint-disable */
   useEffect(() => {
+    let unsubscribeFirestore: (() => void) | null = null;
     try {
       setPortfolioData(getPortfolioData());
       const handleDataUpdate = () => {
         setPortfolioData(getPortfolioData());
       };
       window.addEventListener('portfolio-data-updated', handleDataUpdate);
+
+      // Subscribe to real-time cloud data from Firebase Firestore
+      unsubscribeFirestore = subscribeToPortfolioFirestore((cloudData) => {
+        if (cloudData) {
+          setPortfolioData(cloudData);
+          try {
+            localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(cloudData));
+          } catch {
+            // Ignore
+          }
+        }
+      });
 
       const savedLang = localStorage.getItem('allan_portfolio_lang') as Language;
       if (savedLang && (savedLang === 'pt' || savedLang === 'en' || savedLang === 'es')) {
@@ -58,6 +73,9 @@ export default function HomePage() {
       }
       return () => {
         window.removeEventListener('portfolio-data-updated', handleDataUpdate);
+        if (unsubscribeFirestore) {
+          unsubscribeFirestore();
+        }
       };
     } catch {
       // Ignore
@@ -155,6 +173,7 @@ export default function HomePage() {
           currentLang={currentLang}
           certifications={portfolioData.certifications}
           skillsMatrix={portfolioData.skillsMatrix}
+          education={portfolioData.education}
         />
 
         {/* 3. Professional Experience Timeline (ATS, JLL, ITC, Edgar Santana, JCS, Concrepoxi, Capanema, Madam Mad) */}
@@ -200,7 +219,10 @@ export default function HomePage() {
         <InteractiveDiagnosticTool currentLang={currentLang} />
 
         {/* 8. Professional Reference Contact for Recruiters */}
-        <ProfessionalReferences currentLang={currentLang} />
+        <ProfessionalReferences
+          currentLang={currentLang}
+          references={portfolioData.references}
+        />
 
         {/* 9. Direct Contact & Socials */}
         <ContactSection

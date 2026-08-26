@@ -2,14 +2,16 @@
 
 import React from 'react';
 import { UserCheck, Phone, Building2, ShieldCheck, MessageCircle, ExternalLink } from 'lucide-react';
-import { PROFESSIONAL_REFERENCES, I18N_STRINGS, Language } from '@/lib/portfolio-data';
+import { PROFESSIONAL_REFERENCES, ProfessionalReferenceItem, I18N_STRINGS, Language } from '@/lib/portfolio-data';
 
 interface ProfessionalReferencesProps {
   currentLang: Language;
+  references?: ProfessionalReferenceItem[];
 }
 
-export function ProfessionalReferences({ currentLang }: ProfessionalReferencesProps) {
+export function ProfessionalReferences({ currentLang, references }: ProfessionalReferencesProps) {
   const t = I18N_STRINGS[currentLang];
+  const list = references && references.length > 0 ? references : PROFESSIONAL_REFERENCES;
 
   return (
     <section id="references" className="py-16 md:py-20 bg-white border-t border-slate-200">
@@ -31,7 +33,7 @@ export function ProfessionalReferences({ currentLang }: ProfessionalReferencesPr
 
         {/* References Cards */}
         <div className="grid grid-cols-1 md:grid-cols-1 gap-6 max-w-2xl mx-auto">
-          {PROFESSIONAL_REFERENCES.map((ref) => (
+          {list.map((ref) => (
             <div
               key={ref.id}
               className="p-6 sm:p-8 rounded-2xl bg-slate-50 border border-slate-200 shadow-2xs hover:shadow-md hover:border-blue-300 transition-all space-y-6"
