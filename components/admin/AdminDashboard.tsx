@@ -40,6 +40,7 @@ import {
   DEFAULT_PORTFOLIO_DATA,
 } from '@/lib/portfolio-store';
 import { Language } from '@/lib/portfolio-data';
+import { GoogleDriveImageUpload } from '@/components/GoogleDriveImageUpload';
 
 interface AdminDashboardProps {
   initialData: PortfolioDatabase;
@@ -695,6 +696,19 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
                       </div>
 
                       <form onSubmit={handleSaveFieldActivity} className="space-y-4">
+                        {/* Direct Mobile Camera & Files Upload via Google Drive */}
+                        <GoogleDriveImageUpload
+                          currentImageUrl={editingFieldActivity.image}
+                          titleHint={editingFieldActivity.title.pt || 'foto_campo'}
+                          label="Foto da Atividade (Câmera do Celular ou Galeria)"
+                          onImageChange={(imageUrl) => {
+                            setEditingFieldActivity({
+                              ...editingFieldActivity,
+                              image: imageUrl,
+                            });
+                          }}
+                        />
+
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
@@ -727,18 +741,21 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
                             </select>
                           </div>
 
-                          <div>
-                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
-                              URL da Foto
+                          <div className="flex items-center pt-5">
+                            <label className="flex items-center gap-2 text-xs font-bold text-slate-700 cursor-pointer">
+                              <input
+                                type="checkbox"
+                                checked={editingFieldActivity.highlight}
+                                onChange={(e) =>
+                                  setEditingFieldActivity({
+                                    ...editingFieldActivity,
+                                    highlight: e.target.checked,
+                                  })
+                                }
+                                className="w-4 h-4 text-amber-600 rounded"
+                              />
+                              <span>Exibir como foto em destaque</span>
                             </label>
-                            <input
-                              type="text"
-                              required
-                              value={editingFieldActivity.image}
-                              onChange={(e) => setEditingFieldActivity({ ...editingFieldActivity, image: e.target.value })}
-                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
-                              placeholder="https://exemplo.com/foto.jpg"
-                            />
                           </div>
                         </div>
 

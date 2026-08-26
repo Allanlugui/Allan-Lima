@@ -15,6 +15,7 @@ import { Footer } from '@/components/Footer';
 import { ResumeModal } from '@/components/ResumeModal';
 import { AdminLoginModal } from '@/components/admin/AdminLoginModal';
 import { AdminDashboard } from '@/components/admin/AdminDashboard';
+import { QuickPhotoUploadModal } from '@/components/QuickPhotoUploadModal';
 import {
   PortfolioDatabase,
   getPortfolioData,
@@ -31,6 +32,7 @@ export default function HomePage() {
   const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
   const [isAdminDashboardOpen, setIsAdminDashboardOpen] = useState<boolean>(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(false);
+  const [isQuickPhotoModalOpen, setIsQuickPhotoModalOpen] = useState<boolean>(false);
 
   /* eslint-disable */
   useEffect(() => {
@@ -158,6 +160,13 @@ export default function HomePage() {
               <FieldActivityGallery
                 currentLang={currentLang}
                 activities={portfolioData.fieldActivities}
+                onOpenQuickUpload={() => {
+                  if (isAdminLoggedIn) {
+                    setIsQuickPhotoModalOpen(true);
+                  } else {
+                    setIsAdminModalOpen(true);
+                  }
+                }}
               />
             </div>
           </section>
@@ -213,6 +222,16 @@ export default function HomePage() {
         isOpen={isAdminModalOpen}
         onClose={() => setIsAdminModalOpen(false)}
         onSuccess={handleAdminLoginSuccess}
+      />
+
+      {/* Quick Mobile Field Photo Capture & Google Drive Upload */}
+      <QuickPhotoUploadModal
+        isOpen={isQuickPhotoModalOpen}
+        onClose={() => setIsQuickPhotoModalOpen(false)}
+        currentLang={currentLang}
+        onSuccess={() => {
+          setPortfolioData(getPortfolioData());
+        }}
       />
     </div>
   );

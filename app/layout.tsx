@@ -1,4 +1,5 @@
 import type {Metadata} from 'next';
+import Script from 'next/script';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -35,6 +36,7 @@ export default function RootLayout({children}: {children: React.ReactNode}) {
   return (
     <html lang="pt-BR" className="scroll-smooth">
       <body className="bg-slate-50 text-slate-900 min-h-screen overflow-x-hidden antialiased selection:bg-blue-600 selection:text-white" suppressHydrationWarning>
+        <Script src="https://accounts.google.com/gsi/client" strategy="afterInteractive" />
         {children}
       </body>
     </html>

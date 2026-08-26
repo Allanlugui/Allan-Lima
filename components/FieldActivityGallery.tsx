@@ -25,9 +25,10 @@ import { FieldActivityItem } from '@/lib/portfolio-store';
 interface FieldActivityGalleryProps {
   currentLang: Language;
   activities?: FieldActivityItem[];
+  onOpenQuickUpload?: () => void;
 }
 
-export function FieldActivityGallery({ currentLang, activities }: FieldActivityGalleryProps) {
+export function FieldActivityGallery({ currentLang, activities, onOpenQuickUpload }: FieldActivityGalleryProps) {
   const t = I18N_STRINGS[currentLang];
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
@@ -106,9 +107,21 @@ export function FieldActivityGallery({ currentLang, activities }: FieldActivityG
           </p>
         </div>
 
-        <div className="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg shrink-0 flex items-center gap-1.5 self-start md:self-auto">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>{filteredItems.length} {currentLang === 'pt' ? 'registros exibidos' : currentLang === 'es' ? 'registros mostrados' : 'records shown'}</span>
+        <div className="flex items-center gap-2.5 shrink-0 self-start md:self-auto">
+          {onOpenQuickUpload && (
+            <button
+              onClick={onOpenQuickUpload}
+              className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white rounded-xl text-xs font-bold flex items-center gap-1.5 shadow-xs hover:shadow transition-all cursor-pointer"
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span>{currentLang === 'pt' ? 'Tirar / Enviar Foto' : currentLang === 'es' ? 'Tomar / Subir Foto' : 'Take / Upload Photo'}</span>
+            </button>
+          )}
+
+          <div className="text-xs font-semibold text-slate-500 bg-slate-100 px-3 py-2 rounded-xl shrink-0 flex items-center gap-1.5">
+            <ShieldCheck className="w-4 h-4 text-emerald-600" />
+            <span>{filteredItems.length} {currentLang === 'pt' ? 'registros' : currentLang === 'es' ? 'registros' : 'records'}</span>
+          </div>
         </div>
       </div>
 
