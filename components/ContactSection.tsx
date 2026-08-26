@@ -12,16 +12,21 @@ import {
   CheckCircle,
   Globe,
   ExternalLink,
+  Zap,
+  Code2,
+  Layers,
 } from 'lucide-react';
 import { I18N_STRINGS, Language } from '@/lib/portfolio-data';
 import { PersonalInfo } from '@/lib/portfolio-store';
+import { TrackType } from '@/components/Hero';
 
 interface ContactSectionProps {
   currentLang: Language;
+  currentTrack?: TrackType;
   personalInfo?: PersonalInfo;
 }
 
-export function ContactSection({ currentLang, personalInfo }: ContactSectionProps) {
+export function ContactSection({ currentLang, currentTrack = 'all', personalInfo }: ContactSectionProps) {
   const t = I18N_STRINGS[currentLang];
   const email = personalInfo?.email || 'jallanluiz@gmail.com';
   const linkedin = personalInfo?.linkedin || 'https://www.linkedin.com/in/allan-ls-lima';
@@ -32,7 +37,7 @@ export function ContactSection({ currentLang, personalInfo }: ContactSectionProp
     name: '',
     email: '',
     phone: '',
-    type: 'job',
+    type: currentTrack === 'developer' ? 'consulting' : 'job',
     message: '',
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -52,19 +57,45 @@ export function ContactSection({ currentLang, personalInfo }: ContactSectionProp
 
   const getMailtoLink = () => {
     const subject = encodeURIComponent(
-      `Contato Portfolio Allan Luiz: ${formData.type.toUpperCase()} - ${formData.name}`
+      `Contato Portfolio Allan Luiz [${currentTrack === 'maintenance' ? 'MANUTENÇÃO' : currentTrack === 'developer' ? 'DESENVOLVEDOR' : 'GERAL'}]: ${formData.type.toUpperCase()} - ${formData.name}`
     );
     const body = encodeURIComponent(
-      `Nome: ${formData.name}\nE-mail: ${formData.email}\nTelefone: ${formData.phone}\nTipo de Demanda: ${formData.type}\n\nMensagem:\n${formData.message}`
+      `Nome: ${formData.name}\nE-mail: ${formData.email}\nTelefone: ${formData.phone}\nÁrea de Interesse: ${currentTrack === 'maintenance' ? 'Trilha A - Manutenção Elétrica / Predial' : currentTrack === 'developer' ? 'Trilha B - Desenvolvimento Full-Stack / Software' : 'Visão Integrada'}\nTipo de Demanda: ${formData.type}\n\nMensagem:\n${formData.message}`
     );
     return `mailto:${email}?subject=${subject}&body=${body}`;
   };
 
-  const whatsappMessage = encodeURIComponent(
-    currentLang === 'pt'
-      ? `Olá Allan Luiz! Acessei seu portfólio profissional e gostaria de conversar sobre oportunidades de manutenção e instalações elétricas.`
-      : `Hello Allan! I visited your maintenance portfolio and would like to discuss an opportunity.`
-  );
+  // Pre-configured dynamic WhatsApp message based on active Track (Track A, Track B, or All)
+  const getWhatsAppMessageText = () => {
+    if (currentTrack === 'maintenance') {
+      if (currentLang === 'pt') {
+        return 'Olá Allan Luiz! Sou recrutador/gestor de facilities e acessei seu portfólio na área de Manutenção e Instalações Elétricas (Trilha A). Gostaria de conversar sobre uma oportunidade de trabalho/projeto na área elétrica e manutenção predial.';
+      } else if (currentLang === 'es') {
+        return '¡Hola Allan Luiz! Soy reclutador/gestor de facilities y vi su portafolio en el área de Mantenimiento e Instalaciones Eléctricas (Pista A). Me gustaría conversar sobre una oportunidad en mantenimiento y electricidad.';
+      } else {
+        return 'Hello Allan! I am a recruiter/facilities manager inquiring about your Electrical & Building Maintenance profile (Track A). I would like to discuss an opportunity.';
+      }
+    } else if (currentTrack === 'developer') {
+      if (currentLang === 'pt') {
+        return 'Olá Allan Luiz! Sou recrutador/gestor de tecnologia e acessei seu portfólio na área de Desenvolvimento Full-Stack e Engenharia de Software (Trilha B). Gostaria de conversar sobre uma oportunidade para desenvolvedor (Next.js / TypeScript / Node.js).';
+      } else if (currentLang === 'es') {
+        return '¡Hola Allan Luiz! Soy reclutador/líder técnico y vi su portafolio de Desarrollo Full-Stack (Pista B). Me gustaría conversar sobre una oportunidad en desarrollo de software (Next.js / TypeScript / Node.js).';
+      } else {
+        return 'Hello Allan! I am a tech recruiter inquiring about your Full-Stack Web Development profile (Track B - Next.js / TypeScript / Node.js). I would like to discuss an opportunity.';
+      }
+    } else {
+      // Both / All tracks
+      if (currentLang === 'pt') {
+        return 'Olá Allan Luiz! Acessei seu portfólio profissional completo e gostaria de conversar sobre oportunidades para o seu perfil.';
+      } else if (currentLang === 'es') {
+        return '¡Hola Allan Luiz! Accedí a su portafolio profesional completo y me gustaría conversar sobre oportunidades laborales.';
+      } else {
+        return 'Hello Allan! I visited your professional portfolio and would like to discuss career opportunities.';
+      }
+    }
+  };
+
+  const whatsappMessage = encodeURIComponent(getWhatsAppMessageText());
 
   return (
     <section id="contact" className="py-16 md:py-24 bg-slate-50 border-t border-slate-200">
@@ -161,17 +192,28 @@ export function ContactSection({ currentLang, personalInfo }: ContactSectionProp
                 <div className="p-3 rounded-xl bg-emerald-50 text-emerald-700 border border-emerald-200">
                   <MessageSquare className="w-5 h-5" />
                 </div>
-                <div>
-                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-                    {t.contact.whatsappDirect}
-                  </h4>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2">
+                    <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                      {t.contact.whatsappDirect}
+                    </h4>
+                    <span className={`text-[10px] font-extrabold px-1.5 py-0.5 rounded ${
+                      currentTrack === 'maintenance' ? 'bg-amber-100 text-amber-800' : currentTrack === 'developer' ? 'bg-blue-100 text-blue-800' : 'bg-slate-100 text-slate-700'
+                    }`}>
+                      {currentTrack === 'maintenance' ? 'Trilha A (Manutenção)' : currentTrack === 'developer' ? 'Trilha B (Developer)' : 'Geral'}
+                    </span>
+                  </div>
                   <a
                     href={`https://wa.me/5511915777803?text=${whatsappMessage}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-sm font-bold text-emerald-700 hover:underline inline-flex items-center gap-1 mt-0.5"
                   >
-                    <span>{currentLang === 'pt' ? 'Iniciar Conversa no WhatsApp ((11) 91577-7803)' : 'Open WhatsApp (+55 11 91577-7803)'}</span>
+                    <span>
+                      {currentLang === 'pt'
+                        ? `Conversar no WhatsApp (${currentTrack === 'maintenance' ? 'Mensagem de Manutenção' : currentTrack === 'developer' ? 'Mensagem de Dev/Software' : '(11) 91577-7803'})`
+                        : `Chat on WhatsApp (${currentTrack === 'maintenance' ? 'Maintenance Inquiries' : currentTrack === 'developer' ? 'Software Development' : '+55 11 91577-7803'})`}
+                    </span>
                     &rarr;
                   </a>
                 </div>

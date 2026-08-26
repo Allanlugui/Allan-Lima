@@ -228,12 +228,14 @@ export default function HomePage() {
         {/* 8. Professional Reference Contact for Recruiters */}
         <ProfessionalReferences
           currentLang={currentLang}
+          currentTrack={currentTrack}
           references={portfolioData.references}
         />
 
         {/* 9. Direct Contact & Socials */}
         <ContactSection
           currentLang={currentLang}
+          currentTrack={currentTrack}
           personalInfo={portfolioData.personalInfo}
         />
       </main>

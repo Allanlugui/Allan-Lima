@@ -58,6 +58,7 @@ export interface ProfessionalReferenceItem {
   whatsappNumber: string;
   relationship: Record<Language, string>;
   note: Record<Language, string>;
+  track?: 'maintenance' | 'developer' | 'all';
 }
 
 export const PERSONAL_INFO = {
@@ -1877,6 +1878,7 @@ export const PROFESSIONAL_REFERENCES: ProfessionalReferenceItem[] = [
     company: 'JLL (Jones Lang LaSalle)',
     phone: '+55 (11) 97623-0105',
     whatsappNumber: '5511976230105',
+    track: 'maintenance',
     relationship: {
       pt: 'Encarregado direto de manutenção durante a atuação corporativa na JLL Facilities.',
       en: 'Direct maintenance supervisor during corporate operations at JLL Facilities.',
@@ -1886,6 +1888,29 @@ export const PROFESSIONAL_REFERENCES: ProfessionalReferenceItem[] = [
       pt: 'Contato profissional disponível para recrutadores, empresas e gestores que desejem verificar referências e histórico de desempenho.',
       en: 'Professional contact available for recruiters and hiring managers who wish to verify background and performance references.',
       es: 'Contacto profesional disponible para reclutadores que deseen consultar referencias laborales.',
+    },
+  },
+  {
+    id: 'ref_tech_lead',
+    name: 'Gestão Técnica / Tech Lead',
+    role: {
+      pt: 'Tech Lead / Coordenador de Engenharia de Software',
+      en: 'Tech Lead / Software Engineering Manager',
+      es: 'Líder Técnico / Coordinador de Software',
+    },
+    company: 'Projetos Web & Plataformas Digitais (Next.js / Node)',
+    phone: '+55 (11) 91577-7803',
+    whatsappNumber: '5511915777803',
+    track: 'developer',
+    relationship: {
+      pt: 'Coordenação e supervisão de entregas em projetos full-stack, APIs e plataformas SaaS.',
+      en: 'Technical coordination and code review supervisor across full-stack and SaaS applications.',
+      es: 'Coordinación y supervisión técnica en proyectos full-stack y plataformas SaaS.',
+    },
+    note: {
+      pt: 'Referência técnica para validação de competências em React, Next.js 15, TypeScript, Node.js, arquitetura de software e integridade de entregas.',
+      en: 'Technical reference available to validate proficiencies in React, Next.js 15, TypeScript, Node.js, software architecture and code quality.',
+      es: 'Referencia técnica para validación de competencias en React, Next.js 15, TypeScript, Node.js y arquitectura.',
     },
   },
 ];

@@ -39,7 +39,7 @@ import {
   savePortfolioData,
   DEFAULT_PORTFOLIO_DATA,
 } from '@/lib/portfolio-store';
-import { Language } from '@/lib/portfolio-data';
+import { Language, ProfessionalReferenceItem } from '@/lib/portfolio-data';
 import { GoogleDriveImageUpload } from '@/components/GoogleDriveImageUpload';
 import { deleteFileFromGoogleDrive } from '@/lib/google-drive';
 
@@ -51,7 +51,7 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboardProps) {
   const [data, setData] = useState<PortfolioDatabase>(initialData);
-  const [activeTab, setActiveTab] = useState<'overview' | 'field_activities' | 'projects' | 'experience' | 'skills' | 'blog' | 'profile' | 'backup'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'field_activities' | 'projects' | 'experience' | 'skills' | 'blog' | 'references' | 'profile' | 'backup'>('overview');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
@@ -67,6 +67,9 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
 
   const [editingPost, setEditingPost] = useState<BlogPostItem | null>(null);
   const [isNewPost, setIsNewPost] = useState(false);
+
+  const [editingReference, setEditingReference] = useState<ProfessionalReferenceItem | null>(null);
+  const [isNewReference, setIsNewReference] = useState(false);
 
   const showToast = (type: 'success' | 'error', message: string) => {
     setFeedback({ type, message });
@@ -200,6 +203,29 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
     if (confirm('Tem certeza de que deseja excluir este artigo/relatório?')) {
       const updatedPosts = data.blogPosts.filter((post) => post.id !== id);
       persistChanges({ ...data, blogPosts: updatedPosts }, 'Relatório técnico excluído.');
+    }
+  };
+
+  // Handlers for Professional References (Track A & Track B)
+  const handleSaveReference = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingReference) return;
+
+    let updatedRefs = [...(data.references || [])];
+    if (isNewReference) {
+      updatedRefs = [editingReference, ...updatedRefs];
+    } else {
+      updatedRefs = updatedRefs.map((r) => (r.id === editingReference.id ? editingReference : r));
+    }
+
+    persistChanges({ ...data, references: updatedRefs }, 'Referência profissional salva com sucesso!');
+    setEditingReference(null);
+  };
+
+  const handleDeleteReference = (id: string) => {
+    if (confirm('Tem certeza de que deseja excluir esta recomendação / referência profissional?')) {
+      const updatedRefs = (data.references || []).filter((r) => r.id !== id);
+      persistChanges({ ...data, references: updatedRefs }, 'Referência profissional removida.');
     }
   };
 
@@ -409,6 +435,23 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
             </button>
 
             <button
+              onClick={() => setActiveTab('references')}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'references'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <UserCheck className="w-4 h-4" />
+                <span>Recomendações / Referências</span>
+              </div>
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-800">
+                {data.references?.length || 0}
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('profile')}
               className={`w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'profile'
@@ -575,6 +618,15 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
                       <Edit3 className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform mb-2" />
                       <div className="text-sm font-bold text-slate-900">Editar Perfil</div>
                       <div className="text-xs text-slate-500 mt-0.5">Atualizar telefones, links e biografia</div>
+                    </button>
+
+                    <button
+                      onClick={() => setActiveTab('references')}
+                      className="p-4 rounded-xl border border-slate-200 bg-slate-50 hover:bg-blue-50 hover:border-blue-300 text-left transition-all group"
+                    >
+                      <UserCheck className="w-5 h-5 text-blue-600 group-hover:scale-110 transition-transform mb-2" />
+                      <div className="text-sm font-bold text-slate-900">Recomendações</div>
+                      <div className="text-xs text-slate-500 mt-0.5">Gerenciar referências Trilha A e Trilha B</div>
                     </button>
                   </div>
                 </div>
@@ -1659,6 +1711,330 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
                           >
                             <Save className="w-4 h-4" />
                             <span>Publicar Artigo</span>
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* TAB: PROFESSIONAL REFERENCES & RECOMMENDATIONS (TRACK A & TRACK B) */}
+            {activeTab === 'references' && (
+              <div className="space-y-6">
+                <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900">
+                      Recomendações e Referências Profissionais para Recrutadores
+                    </h2>
+                    <p className="text-xs text-slate-500">
+                      Configure referências segmentadas para a Trilha A (Manutenção Elétrica), Trilha B (Desenvolvedor de Software) ou Ambas.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsNewReference(true);
+                      setEditingReference({
+                        id: `ref_${Date.now()}`,
+                        name: '',
+                        role: { pt: '', en: '', es: '' },
+                        company: '',
+                        phone: '',
+                        whatsappNumber: '',
+                        track: 'maintenance',
+                        relationship: { pt: '', en: '', es: '' },
+                        note: { pt: '', en: '', es: '' },
+                      });
+                    }}
+                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm transition-all shrink-0 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Nova Referência</span>
+                  </button>
+                </div>
+
+                <div className="space-y-3">
+                  {(data.references || []).map((ref) => {
+                    const isMaint = ref.track === 'maintenance';
+                    const isDev = ref.track === 'developer';
+
+                    return (
+                      <div
+                        key={ref.id}
+                        className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                      >
+                        <div className="space-y-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className={`px-2 py-0.5 rounded-md text-[10px] font-extrabold border ${
+                              isMaint
+                                ? 'bg-amber-50 text-amber-800 border-amber-200'
+                                : isDev
+                                ? 'bg-blue-50 text-blue-800 border-blue-200'
+                                : 'bg-slate-100 text-slate-700 border-slate-300'
+                            }`}>
+                              {isMaint ? 'Trilha A - Manutenção' : isDev ? 'Trilha B - Desenvolvedor' : 'Ambas as Trilhas (Geral)'}
+                            </span>
+                            <span className="text-xs font-bold text-slate-900">{ref.name}</span>
+                            <span className="text-xs text-slate-400 font-medium">• {ref.company}</span>
+                          </div>
+                          <p className="text-xs font-semibold text-blue-700">{ref.role.pt}</p>
+                          <p className="text-xs text-slate-600 line-clamp-2">{ref.note.pt}</p>
+                          <div className="flex items-center gap-3 text-[11px] text-slate-500 font-medium pt-1">
+                            <span>📞 {ref.phone}</span>
+                            {ref.whatsappNumber && <span>💬 WhatsApp: {ref.whatsappNumber}</span>}
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 shrink-0">
+                          <button
+                            onClick={() => {
+                              setIsNewReference(false);
+                              setEditingReference(JSON.parse(JSON.stringify(ref)));
+                            }}
+                            className="p-2 bg-slate-100 hover:bg-blue-50 hover:text-blue-600 text-slate-700 rounded-lg text-xs font-semibold transition-colors border border-slate-200 cursor-pointer"
+                            title="Editar referência"
+                          >
+                            <Edit3 className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteReference(ref.id)}
+                            className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-semibold transition-colors border border-red-200 cursor-pointer"
+                            title="Excluir referência"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+
+                  {(!data.references || data.references.length === 0) && (
+                    <div className="text-center p-8 bg-white border border-slate-200 rounded-xl text-slate-500 text-xs">
+                      Nenhuma referência cadastrada. Clique no botão acima para adicionar referências da Trilha A ou Trilha B.
+                    </div>
+                  )}
+                </div>
+
+                {/* Edit Reference Modal */}
+                {editingReference && (
+                  <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-2xl w-full p-6 space-y-4 my-8 max-h-[90vh] overflow-y-auto">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h3 className="text-base font-bold text-slate-900">
+                          {isNewReference ? 'Nova Referência / Recomendação Profissional' : 'Editar Referência'}
+                        </h3>
+                        <button
+                          onClick={() => setEditingReference(null)}
+                          className="text-slate-400 hover:text-slate-600 text-sm font-bold cursor-pointer"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <form onSubmit={handleSaveReference} className="space-y-4">
+                        {/* Track Selection Field */}
+                        <div className="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-2">
+                          <label className="block text-xs font-bold text-slate-800 uppercase">
+                            Área de Aplicação da Referência (Trilha de Exibição)
+                          </label>
+                          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <label
+                              className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-bold cursor-pointer transition-all ${
+                                editingReference.track === 'maintenance'
+                                  ? 'bg-amber-500 text-white border-amber-600 shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="refTrack"
+                                value="maintenance"
+                                checked={editingReference.track === 'maintenance'}
+                                onChange={() => setEditingReference({ ...editingReference, track: 'maintenance' })}
+                                className="sr-only"
+                              />
+                              <span>⚡ Trilha A: Manutenção</span>
+                            </label>
+
+                            <label
+                              className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-bold cursor-pointer transition-all ${
+                                editingReference.track === 'developer'
+                                  ? 'bg-blue-600 text-white border-blue-700 shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="refTrack"
+                                value="developer"
+                                checked={editingReference.track === 'developer'}
+                                onChange={() => setEditingReference({ ...editingReference, track: 'developer' })}
+                                className="sr-only"
+                              />
+                              <span>💻 Trilha B: Desenvolvedor</span>
+                            </label>
+
+                            <label
+                              className={`flex items-center gap-2 p-2.5 rounded-lg border text-xs font-bold cursor-pointer transition-all ${
+                                editingReference.track === 'all' || !editingReference.track
+                                  ? 'bg-slate-800 text-white border-slate-900 shadow-xs'
+                                  : 'bg-white text-slate-700 border-slate-200 hover:bg-slate-100'
+                              }`}
+                            >
+                              <input
+                                type="radio"
+                                name="refTrack"
+                                value="all"
+                                checked={editingReference.track === 'all' || !editingReference.track}
+                                onChange={() => setEditingReference({ ...editingReference, track: 'all' })}
+                                className="sr-only"
+                              />
+                              <span>🌐 Ambas as Áreas (Geral)</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              Nome do Contato / Referência
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={editingReference.name}
+                              onChange={(e) =>
+                                setEditingReference({ ...editingReference, name: e.target.value })
+                              }
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                              placeholder="Ex: Antoniel ou Gestão Técnica"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              Empresa / Organização
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={editingReference.company}
+                              onChange={(e) =>
+                                setEditingReference({ ...editingReference, company: e.target.value })
+                              }
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                              placeholder="Ex: JLL (Jones Lang LaSalle)"
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              Cargo / Função (Português)
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={editingReference.role.pt}
+                              onChange={(e) =>
+                                setEditingReference({
+                                  ...editingReference,
+                                  role: { ...editingReference.role, pt: e.target.value },
+                                })
+                              }
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                              placeholder="Ex: Encarregado de Manutenção Predial & Facilities"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              Relação Profissional (Português)
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={editingReference.relationship.pt}
+                              onChange={(e) =>
+                                setEditingReference({
+                                  ...editingReference,
+                                  relationship: { ...editingReference.relationship, pt: e.target.value },
+                                })
+                              }
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                              placeholder="Ex: Encarregado direto durante a atuação na JLL Facilities."
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              Telefone de Contato (Exibição)
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={editingReference.phone}
+                              onChange={(e) =>
+                                setEditingReference({ ...editingReference, phone: e.target.value })
+                              }
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                              placeholder="Ex: +55 (11) 97623-0105"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              Número WhatsApp (Apenas Números com DDI e DDD)
+                            </label>
+                            <input
+                              type="text"
+                              value={editingReference.whatsappNumber}
+                              onChange={(e) =>
+                                setEditingReference({ ...editingReference, whatsappNumber: e.target.value })
+                              }
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                              placeholder="Ex: 5511976230105"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Descrição / Nota para os Recrutadores (Português)
+                          </label>
+                          <textarea
+                            rows={3}
+                            required
+                            value={editingReference.note.pt}
+                            onChange={(e) =>
+                              setEditingReference({
+                                ...editingReference,
+                                note: { ...editingReference.note, pt: e.target.value },
+                              })
+                            }
+                            className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                            placeholder="Contato disponível para recrutadores e gestores que desejem verificar referências e histórico de desempenho..."
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                          <button
+                            type="button"
+                            onClick={() => setEditingReference(null)}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl transition-colors cursor-pointer"
+                          >
+                            Cancelar
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-5 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
+                          >
+                            <Save className="w-4 h-4" />
+                            <span>Salvar Referência</span>
                           </button>
                         </div>
                       </form>
