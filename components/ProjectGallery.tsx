@@ -21,32 +21,60 @@ import {
 } from 'lucide-react';
 import { I18N_STRINGS, Language } from '@/lib/portfolio-data';
 import { ProjectItem } from '@/lib/portfolio-store';
+import { TrackType } from '@/components/Hero';
 
 interface ProjectGalleryProps {
   currentLang: Language;
   projects?: ProjectItem[];
+  currentTrack?: TrackType;
 }
 
-export function ProjectGallery({ currentLang, projects }: ProjectGalleryProps) {
+export function ProjectGallery({ currentLang, projects, currentTrack = 'all' }: ProjectGalleryProps) {
   const t = I18N_STRINGS[currentLang];
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [activeProject, setActiveProject] = useState<ProjectItem | null>(null);
 
-  const categories = [
-    { id: 'all', label: t.projects.allCategories, icon: Layers },
-    { id: 'fullstack', label: t.projects.catFullStack, icon: Code2 },
-    { id: 'electrical', label: t.projects.catElectrical, icon: Zap },
-    { id: 'generators_ups', label: t.projects.catGenerators, icon: Zap },
-    { id: 'predictive', label: t.projects.catPredictive, icon: Activity },
-    { id: 'hydraulic', label: t.projects.catHydraulic, icon: Wrench },
-    { id: 'civil_painting', label: t.projects.catCivil, icon: Building },
-  ];
+  const categories = useMemo(() => {
+    if (currentTrack === 'developer') {
+      return [
+        { id: 'all', label: currentLang === 'pt' ? 'Todos os Softwares' : currentLang === 'es' ? 'Todos los Software' : 'All Software', icon: Code2 },
+        { id: 'fullstack', label: t.projects.catFullStack, icon: Code2 },
+      ];
+    }
+    if (currentTrack === 'maintenance') {
+      return [
+        { id: 'all', label: t.projects.allCategories, icon: Layers },
+        { id: 'electrical', label: t.projects.catElectrical, icon: Zap },
+        { id: 'generators_ups', label: t.projects.catGenerators, icon: Zap },
+        { id: 'predictive', label: t.projects.catPredictive, icon: Activity },
+        { id: 'hydraulic', label: t.projects.catHydraulic, icon: Wrench },
+        { id: 'civil_painting', label: t.projects.catCivil, icon: Building },
+      ];
+    }
+    return [
+      { id: 'all', label: t.projects.allCategories, icon: Layers },
+      { id: 'fullstack', label: t.projects.catFullStack, icon: Code2 },
+      { id: 'electrical', label: t.projects.catElectrical, icon: Zap },
+      { id: 'generators_ups', label: t.projects.catGenerators, icon: Zap },
+      { id: 'predictive', label: t.projects.catPredictive, icon: Activity },
+      { id: 'hydraulic', label: t.projects.catHydraulic, icon: Wrench },
+      { id: 'civil_painting', label: t.projects.catCivil, icon: Building },
+    ];
+  }, [currentTrack, currentLang, t]);
 
-  // Filter projects by category and query
+  // Filter projects by currentTrack, category, and query
   const filteredProjects = useMemo(() => {
     const list = projects || [];
     return list.filter((proj) => {
+      // Track-level strict separation
+      if (currentTrack === 'developer' && proj.category !== 'fullstack') {
+        return false;
+      }
+      if (currentTrack === 'maintenance' && proj.category === 'fullstack') {
+        return false;
+      }
+
       // Category check
       const matchesCategory =
         selectedCategory === 'all' || proj.category === selectedCategory;
@@ -68,7 +96,7 @@ export function ProjectGallery({ currentLang, projects }: ProjectGalleryProps) {
 
       return title.includes(q) || summary.includes(q) || equipmentMatch || standardsMatch;
     });
-  }, [projects, selectedCategory, searchQuery, currentLang]);
+  }, [projects, currentTrack, selectedCategory, searchQuery, currentLang]);
 
   return (
     <section id="projects" className="py-16 md:py-24 bg-white border-t border-slate-200">
@@ -77,14 +105,38 @@ export function ProjectGallery({ currentLang, projects }: ProjectGalleryProps) {
         {/* Section Header */}
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 mb-3">
-            <Wrench className="w-3.5 h-3.5" />
-            <span>{currentLang === 'pt' ? 'Obras & Intervenções Práticas' : currentLang === 'es' ? 'Obras y Trabajos Prácticos' : 'Hands-on Projects & Interventions'}</span>
+            {currentTrack === 'developer' ? <Code2 className="w-3.5 h-3.5" /> : <Wrench className="w-3.5 h-3.5" />}
+            <span>
+              {currentTrack === 'developer'
+                ? currentLang === 'pt'
+                  ? 'Aplicações Web, Plataformas SaaS & APIs'
+                  : currentLang === 'es'
+                  ? 'Aplicaciones Web, SaaS y APIs'
+                  : 'Web Applications, SaaS & APIs'
+                : currentLang === 'pt'
+                ? 'Obras & Intervenções Práticas'
+                : currentLang === 'es'
+                ? 'Obras y Trabajos Prácticos'
+                : 'Hands-on Projects & Interventions'}
+            </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            {t.projects.sectionTitle}
+            {currentTrack === 'developer'
+              ? currentLang === 'pt'
+                ? 'Projetos de Desenvolvimento de Software'
+                : currentLang === 'es'
+                ? 'Proyectos de Desarrollo de Software'
+                : 'Software Engineering Projects'
+              : t.projects.sectionTitle}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 mt-2">
-            {t.projects.sectionSubtitle}
+            {currentTrack === 'developer'
+              ? currentLang === 'pt'
+                ? 'Plataformas completas em produção desenvolvidas com Next.js 15, React 19, TypeScript, Node.js e Tailwind CSS com deploys ativos na Vercel.'
+                : currentLang === 'es'
+                ? 'Plataformas completas en producción desarrolladas con Next.js 15, React 19, TypeScript, Node.js y Tailwind CSS.'
+                : 'Production-ready web applications built with Next.js 15, React 19, TypeScript, Node.js, and Tailwind CSS.'
+              : t.projects.sectionSubtitle}
           </p>
         </div>
 

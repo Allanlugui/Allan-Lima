@@ -171,6 +171,7 @@ export default function HomePage() {
         {/* 2. About Me & Technical Qualifications (Education, Certifications, Skills Matrix) */}
         <AboutAndQualifications
           currentLang={currentLang}
+          currentTrack={currentTrack}
           certifications={portfolioData.certifications}
           skillsMatrix={portfolioData.skillsMatrix}
           education={portfolioData.education}
@@ -179,6 +180,7 @@ export default function HomePage() {
         {/* 3. Professional Experience Timeline (ATS, JLL, ITC, Edgar Santana, JCS, Concrepoxi, Capanema, Madam Mad) */}
         <ExperienceTimeline
           currentLang={currentLang}
+          currentTrack={currentTrack}
           experiences={portfolioData.experiences}
         />
 
@@ -205,18 +207,23 @@ export default function HomePage() {
         {(currentTrack === 'all' || currentTrack === 'developer') && (
           <ProjectGallery
             currentLang={currentLang}
+            currentTrack={currentTrack}
             projects={portfolioData.projects}
           />
         )}
 
         {/* 6. Technical Work Logs & Maintenance Case Studies */}
-        <BlogWorkLogs
-          currentLang={currentLang}
-          posts={portfolioData.blogPosts}
-        />
+        {(currentTrack === 'all' || currentTrack === 'maintenance') && (
+          <BlogWorkLogs
+            currentLang={currentLang}
+            posts={portfolioData.blogPosts}
+          />
+        )}
 
         {/* 7. Interactive Diagnostic & Electrical Sizing Tool */}
-        <InteractiveDiagnosticTool currentLang={currentLang} />
+        {(currentTrack === 'all' || currentTrack === 'maintenance') && (
+          <InteractiveDiagnosticTool currentLang={currentLang} />
+        )}
 
         {/* 8. Professional Reference Contact for Recruiters */}
         <ProfessionalReferences

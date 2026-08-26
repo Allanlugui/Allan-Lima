@@ -10,19 +10,34 @@ import {
   Layers,
   Clock,
   Activity,
+  Code2,
+  Terminal,
+  Sparkles,
 } from 'lucide-react';
-import { I18N_STRINGS, Language } from '@/lib/portfolio-data';
+import { I18N_STRINGS, Language, DEVELOPER_EXPERIENCES, EXPERIENCES } from '@/lib/portfolio-data';
 import { ExperienceItem } from '@/lib/portfolio-store';
+import { TrackType } from '@/components/Hero';
 
 interface ExperienceProps {
   currentLang: Language;
+  currentTrack?: TrackType;
   experiences?: ExperienceItem[];
 }
 
-export function ExperienceTimeline({ currentLang, experiences }: ExperienceProps) {
+export function ExperienceTimeline({
+  currentLang,
+  currentTrack = 'all',
+  experiences,
+}: ExperienceProps) {
   const t = I18N_STRINGS[currentLang];
 
-  const expList = experiences || [];
+  // Pick dataset according to currentTrack
+  const expList =
+    currentTrack === 'developer'
+      ? DEVELOPER_EXPERIENCES
+      : currentTrack === 'maintenance'
+      ? (experiences || EXPERIENCES).filter((e) => !e.id.startsWith('dev_'))
+      : (experiences || EXPERIENCES);
 
   return (
     <section id="experience" className="py-16 md:py-24 bg-slate-50 border-t border-slate-200">
@@ -31,14 +46,38 @@ export function ExperienceTimeline({ currentLang, experiences }: ExperienceProps
         {/* Section Header */}
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 mb-3">
-            <Briefcase className="w-3.5 h-3.5" />
-            <span>{currentLang === 'pt' ? 'Histórico Profissional' : currentLang === 'es' ? 'Historial Profesional' : 'Work Experience'}</span>
+            {currentTrack === 'developer' ? <Code2 className="w-3.5 h-3.5" /> : <Briefcase className="w-3.5 h-3.5" />}
+            <span>
+              {currentTrack === 'developer'
+                ? currentLang === 'pt'
+                  ? 'Trajetória em Desenvolvimento de Software'
+                  : currentLang === 'es'
+                  ? 'Trayectoria en Desarrollo de Software'
+                  : 'Software Engineering Experience'
+                : currentLang === 'pt'
+                ? 'Histórico Profissional'
+                : currentLang === 'es'
+                ? 'Historial Profesional'
+                : 'Work Experience'}
+            </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            {t.experience.sectionTitle}
+            {currentTrack === 'developer'
+              ? currentLang === 'pt'
+                ? 'Experiência em Desenvolvimento Full-Stack & Sistemas Web'
+                : currentLang === 'es'
+                ? 'Experiencia en Desarrollo Full-Stack y Sistemas Web'
+                : 'Full-Stack Development & Web Systems Experience'
+              : t.experience.sectionTitle}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 mt-2">
-            {t.experience.sectionSubtitle}
+            {currentTrack === 'developer'
+              ? currentLang === 'pt'
+                ? 'Histórico prático em arquitetura web, desenvolvimento de plataformas SaaS, ERPs operacionais, APIs RESTful e interfaces modernas de alta performance.'
+                : currentLang === 'es'
+                ? 'Historial práctico en arquitectura web, plataformas SaaS, ERPs, APIs RESTful e interfaces modernas.'
+                : 'Practical track record in web architecture, SaaS platforms, ERPs, RESTful APIs, and modern high-performance interfaces.'
+              : t.experience.sectionSubtitle}
           </p>
         </div>
 
@@ -49,16 +88,30 @@ export function ExperienceTimeline({ currentLang, experiences }: ExperienceProps
               key={exp.id}
               className={`relative rounded-2xl p-6 sm:p-8 bg-white border ${
                 idx === 0
-                  ? 'border-blue-300 shadow-md'
+                  ? currentTrack === 'developer'
+                    ? 'border-blue-300 shadow-md ring-1 ring-blue-100'
+                    : 'border-blue-300 shadow-md'
                   : 'border-slate-200 shadow-2xs'
               } transition-all`}
             >
-              {/* Highlight ribbon for JLL */}
+              {/* Highlight ribbon */}
               {idx === 0 && (
                 <div className="absolute top-0 right-6 -translate-y-1/2">
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-blue-600 text-white font-extrabold text-xs uppercase tracking-wider shadow-xs">
-                    <Activity className="w-3.5 h-3.5" />
-                    <span>{currentLang === 'pt' ? 'Atuação Chave JLL' : currentLang === 'es' ? 'Experiencia Clave JLL' : 'Key JLL Experience'}</span>
+                    {currentTrack === 'developer' ? <Code2 className="w-3.5 h-3.5" /> : <Activity className="w-3.5 h-3.5" />}
+                    <span>
+                      {currentTrack === 'developer'
+                        ? currentLang === 'pt'
+                          ? 'Atuação Full-Stack Ativa'
+                          : currentLang === 'es'
+                          ? 'Desarrollo Full-Stack Activo'
+                          : 'Active Full-Stack Role'
+                        : currentLang === 'pt'
+                        ? 'Atuação Chave JLL'
+                        : currentLang === 'es'
+                        ? 'Experiencia Clave JLL'
+                        : 'Key JLL Experience'}
+                    </span>
                   </span>
                 </div>
               )}
@@ -69,7 +122,7 @@ export function ExperienceTimeline({ currentLang, experiences }: ExperienceProps
                 <div className="lg:col-span-4 space-y-3">
                   <div className="flex items-center gap-3">
                     <div className="p-3 rounded-xl bg-blue-50 text-blue-700 border border-blue-200 shrink-0">
-                      <Building2 className="w-6 h-6" />
+                      {currentTrack === 'developer' ? <Terminal className="w-6 h-6" /> : <Building2 className="w-6 h-6" />}
                     </div>
                     <div>
                       <h3 className="text-xl font-extrabold text-slate-900 leading-tight">
@@ -125,7 +178,15 @@ export function ExperienceTimeline({ currentLang, experiences }: ExperienceProps
                   <div className="pt-2">
                     <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 mb-3 flex items-center gap-1.5">
                       <CheckCircle2 className="w-4 h-4 text-blue-600" />
-                      <span>{t.experience.keyResponsibilities}</span>
+                      <span>
+                        {currentTrack === 'developer'
+                          ? currentLang === 'pt'
+                            ? 'Principais Entregas & Soluções Desenvolvidas'
+                            : currentLang === 'es'
+                            ? 'Principales Entregas y Soluciones Desarrolladas'
+                            : 'Key Deliverables & Developed Solutions'
+                          : t.experience.keyResponsibilities}
+                      </span>
                     </h4>
 
                     <div className="space-y-2">

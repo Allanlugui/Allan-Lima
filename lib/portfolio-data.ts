@@ -613,6 +613,349 @@ export const EXPERIENCES: ExperienceItem[] = [
   },
 ];
 
+export const DEVELOPER_EXPERIENCES: ExperienceItem[] = [
+  {
+    id: 'dev_freelance_fullstack',
+    role: {
+      pt: 'Desenvolvedor Web Full-Stack / Software Engineer',
+      en: 'Full-Stack Software Engineer & Web Developer',
+      es: 'Desarrollador Full-Stack e Ingeniero de Software',
+    },
+    company: 'Projetos Práticos & Soluções Web Corporativas',
+    location: 'São Paulo - SP (Remoto / Freelance)',
+    period: {
+      pt: '2023 - Atualmente',
+      en: '2023 - Present',
+      es: '2023 - Actualidad',
+    },
+    duration: {
+      pt: 'Atuação Contínua',
+      en: 'Continuous Practice',
+      es: 'Práctica Continua',
+    },
+    type: {
+      pt: 'Autônomo / Freelancer & Soluções Digitais',
+      en: 'Freelance & Digital Solutions',
+      es: 'Freelance y Soluciones Digitales',
+    },
+    description: {
+      pt: 'Concepção, arquitetura de software e desenvolvimento de aplicações web modernas, plataformas SaaS e sistemas de gestão de alto desempenho. Foco em TypeScript, React, Next.js (App Router, Server Actions), Node.js, REST APIs, bancos de dados relacionais e em tempo real (PostgreSQL, Firestore), Clean Architecture e deploy automatizado CI/CD.',
+      en: 'Architecture and end-to-end development of modern web applications, SaaS platforms, and high-performance management systems. Focused on TypeScript, React, Next.js (App Router, Server Actions), Node.js, REST APIs, SQL/NoSQL databases (PostgreSQL, Firestore), Clean Architecture, and automated CI/CD deployment.',
+      es: 'Arquitectura y desarrollo integral de aplicaciones web modernas, plataformas SaaS y sistemas de gestión de alto rendimiento. Enfoque en TypeScript, React, Next.js, Node.js, APIs REST, PostgreSQL, Firestore y despliegue CI/CD.',
+    },
+    achievements: {
+      pt: [
+        'Desenvolvimento e publicação de mais de 10 plataformas web funcionais em produção (ERPs de facilities, agendamentos de limpeza CleanPro, sistemas de prontuário clínico MediFlow, portais educacionais CEI/EBD, dashboards analíticos SaaS e web rádio streaming com Web Audio API).',
+        'Implementação de arquitetura baseada em Next.js App Router, Server Components e Server Actions, otimizando Core Web Vitals e renderização ultra-rápida.',
+        'Construção de APIs RESTful estruturadas com Node.js e Express, incluindo validação rigorosa de esquemas, middleware de proteção e autenticação segura baseada em tokens.',
+        'Modelagem e integração de bancos de dados relacionais (PostgreSQL) e NoSQL em tempo real (Firebase Firestore / Supabase) com índices e regras de segurança estritas.',
+        'Aplicação de princípios SOLID, Clean Code e versionamento profissional com Git/GitHub e automação de deploy contínuo (CI/CD via Vercel).',
+      ],
+      en: [
+        'Designed and deployed 10+ production-ready web platforms (CleanPro booking system, MediFlow clinical records, CEI educational portals, SaaS analytics dashboards, and Web Audio streaming platform).',
+        'Implemented modern architectures with Next.js App Router, Server Components and Server Actions, maximizing Core Web Vitals and SEO performance.',
+        'Constructed structured RESTful APIs with Node.js and Express, incorporating strict schema validation, security middleware, and token-based authentication.',
+        'Engineered relational database schemas (PostgreSQL) and real-time NoSQL databases (Firebase Firestore / Supabase) with tight security rules.',
+        'Applied SOLID principles, Clean Code standards, and automated CI/CD deployment workflows via Git and Vercel.',
+      ],
+      es: [
+        'Desarrollo y despliegue de más de 10 aplicaciones web en producción (plataforma CleanPro, MediFlow, portales educativos CEI, dashboards SaaS y streaming de audio).',
+        'Implementación de arquitecturas modernas con Next.js App Router y Server Actions con máximo rendimiento.',
+        'Construcción de APIs RESTful con Node.js, Express, validación estricta y autenticación segura.',
+        'Modelado de bases de datos relacionales (PostgreSQL) y NoSQL en tiempo real (Firestore) con reglas de seguridad.',
+        'Buenas prácticas de Clean Code, control de versiones con Git/GitHub e integración continua CI/CD.',
+      ],
+    },
+    skills: [
+      'TypeScript',
+      'Next.js 15',
+      'React 19',
+      'Node.js',
+      'PostgreSQL',
+      'Firestore',
+      'Tailwind CSS',
+      'REST APIs',
+      'Clean Code',
+      'Git & CI/CD',
+    ],
+  },
+  {
+    id: 'dev_solutions_analyst',
+    role: {
+      pt: 'Desenvolvedor de Soluções Web & Automação de Processos',
+      en: 'Web Solutions Developer & Workflow Automation',
+      es: 'Desarrollador de Soluciones Web y Automatización',
+    },
+    company: 'Allan Lima Dev Solutions',
+    location: 'São Paulo - SP',
+    period: {
+      pt: '2022 - 2023',
+      en: '2022 - 2023',
+      es: '2022 - 2023',
+    },
+    duration: {
+      pt: '1 ano',
+      en: '1 year',
+      es: '1 año',
+    },
+    type: {
+      pt: 'Projetos e Automação',
+      en: 'Projects & Automation',
+      es: 'Proyectos y Automatización',
+    },
+    description: {
+      pt: 'Desenvolvimento de ferramentas digitais, calculadoras dinâmicas de engenharia e dashboards para automação de rotinas operacionais, controle de dados e interfaces responsivas com foco em usabilidade.',
+      en: 'Developed digital tools, interactive engineering calculators, and dashboards to automate operational routines, data management, and responsive interfaces focused on UX.',
+      es: 'Desarrollo de herramientas digitales, calculadoras de ingeniería y dashboards para automatización de rutinas operacionales y control de datos.',
+    },
+    achievements: {
+      pt: [
+        'Criação de componentes reativos com validação de formulários em tempo real e cálculos automáticos de métricas.',
+        'Integração com serviços de nuvem, envio de notificações e persistência de dados estruturados.',
+        'Otimização de acessibilidade e design responsivo (Mobile-First) para compatibilidade entre smartphones, tablets e desktops.',
+      ],
+      en: [
+        'Engineered reactive UI components with real-time input validation and automatic metric computations.',
+        'Integrated cloud services, transactional messaging, and structured local/remote persistence.',
+        'Optimized mobile-first responsiveness and accessibility for cross-device performance.',
+      ],
+      es: [
+        'Creación de componentes dinámicos con validación en tiempo real y cálculos automáticos.',
+        'Integración con servicios cloud y persistencia estructurada de datos.',
+        'Optimización responsive mobile-first y accesibilidad cross-device.',
+      ],
+    },
+    skills: ['JavaScript (ES6+)', 'TypeScript', 'React', 'HTML5/CSS3', 'REST APIs', 'UI/UX Responsivo'],
+  },
+];
+
+export const DEVELOPER_EDUCATION: EducationItem[] = [
+  {
+    id: 'senai_ti_dev',
+    degree: {
+      pt: 'Competência Transversal - Tecnologia da Informação',
+      en: 'Cross-Disciplinary Competence - Information Technology',
+      es: 'Competencia Transversal - Tecnología de la Información',
+    },
+    institution: 'SENAI Ary Torres - São Paulo/SP',
+    year: '04/2020',
+    description: {
+      pt: 'Sistemas operacionais, licenciamento de software, hardware, ativos de rede, cabeamento estruturado, serviços de rede, pilares de segurança da informação, governança e modelo OSI.',
+      en: 'Operating systems, software licensing, hardware architectures, network assets, structured cabling, network services, information security pillars, governance, and OSI model.',
+      es: 'Sistemas operativos, licencias, hardware, redes, cableado estructurado, seguridad de la información y modelo OSI.',
+    },
+    topics: {
+      pt: [
+        'Cabeamento Estruturado e Conectividade de Redes',
+        'Ativos de Rede e Infraestrutura de TI',
+        'Segurança da Informação e Mitigação de Riscos',
+        'Arquitetura de Sistemas Operacionais e Modelo OSI',
+        'Governança de TI e Licenciamento de Software',
+      ],
+      en: [
+        'Structured Cabling & Network Connectivity',
+        'Network Active Hardware & IT Infrastructure',
+        'Information Security & Risk Mitigation',
+        'OS Architecture & OSI Model Layers',
+        'IT Governance & Software Licensing',
+      ],
+      es: [
+        'Cableado estructurado y conectividad de redes',
+        'Infraestructura de red y hardware',
+        'Seguridad de la información y mitigación de riesgos',
+        'Arquitectura de sistemas operativos y modelo OSI',
+      ],
+    },
+  },
+  {
+    id: 'dev_fullstack_spec',
+    degree: {
+      pt: 'Formação Contínua em Desenvolvimento Web Full-Stack',
+      en: 'Full-Stack Web Development & Modern Software Engineering',
+      es: 'Formación Continua en Desarrollo Web Full-Stack',
+    },
+    institution: 'Engenharia de Software & Ecossistemas Web Modernos',
+    year: '2022 - Atualmente',
+    description: {
+      pt: 'Especialização prática contínua em arquitetura web moderna, TypeScript estrito, ecossistema React/Next.js (App Router, Server Actions), Node.js, APIs RESTful, bancos de dados relacionais (PostgreSQL) e NoSQL (Firestore), Clean Code e CI/CD.',
+      en: 'Advanced practical specialization in modern web architecture, strict TypeScript, React/Next.js ecosystem, Node.js, RESTful APIs, relational databases (PostgreSQL), NoSQL (Firestore), Clean Code, and CI/CD.',
+      es: 'Especialización práctica en arquitectura web moderna, TypeScript, React/Next.js, Node.js, APIs RESTful, bases de datos PostgreSQL/Firestore y Clean Code.',
+    },
+    topics: {
+      pt: [
+        'Next.js 15 & React 19 Avançado (App Router, SSR, Server Actions)',
+        'TypeScript Estrito e Padrões de Projeto (Design Patterns)',
+        'Engenharia de Backend com Node.js, Express e REST APIs',
+        'Modelagem Relacional (PostgreSQL) e NoSQL em Tempo Real (Firestore)',
+        'Deploy Contínuo, Git Flow e DevOps Básico (Vercel, Cloud)',
+      ],
+      en: [
+        'Advanced Next.js 15 & React 19 (App Router, SSR, Server Actions)',
+        'Strict TypeScript and Design Patterns',
+        'Backend Engineering with Node.js, Express & REST APIs',
+        'Relational (PostgreSQL) & Real-time NoSQL (Firestore) Data Modeling',
+        'Continuous Deployment, Git Flow & DevOps Essentials',
+      ],
+      es: [
+        'Next.js 15 y React 19 avanzado (App Router, SSR, Server Actions)',
+        'TypeScript estricto y patrones de diseño',
+        'Ingeniería backend con Node.js y APIs REST',
+        'Modelado de datos en PostgreSQL y Firestore',
+        'Integración continua, Git y despliegue cloud',
+      ],
+    },
+  },
+  {
+    id: 'ensino_medio_dev',
+    degree: {
+      pt: 'Ensino Médio Completo',
+      en: 'High School Diploma',
+      es: 'Educación Secundaria Completa',
+    },
+    institution: 'CEEJA Sinhá Pantoja - São Paulo/SP',
+    year: '03/2022',
+    description: {
+      pt: 'Formação básica concluída com ênfase em raciocínio lógico-matemático e comunicação.',
+      en: 'Complete general secondary education with strong logical reasoning and communication.',
+      es: 'Educación secundaria completa con base sólida en razonamiento y comunicación.',
+    },
+    topics: {
+      pt: ['Ensino Médio Geral Concluído'],
+      en: ['General Secondary Education Completed'],
+      es: ['Educación Secundaria Completa'],
+    },
+  },
+];
+
+export const DEVELOPER_CERTIFICATIONS: CertificationItem[] = [
+  {
+    id: 'dev_cert_nextjs',
+    name: 'Desenvolvimento Web Full-Stack (Next.js 15 & React 19)',
+    code: 'NEXT-REACT-FULLSTACK',
+    authority: 'Ecossistema Moderno de Desenvolvimento Web',
+    validity: { pt: 'Habilitação Ativa', en: 'Certified & Active', es: 'Certificado y Activo' },
+    description: {
+      pt: 'Arquitetura de aplicações web de alto desempenho, Server Components, App Router, Server Actions, estilização com Tailwind CSS e otimização de Core Web Vitals.',
+      en: 'High-performance web application architecture, Server Components, App Router, Server Actions, Tailwind CSS styling, and Core Web Vitals optimization.',
+      es: 'Arquitectura web de alto rendimiento, Server Components, App Router, Server Actions y Tailwind CSS.',
+    },
+    iconName: 'Code2',
+  },
+  {
+    id: 'dev_cert_typescript',
+    name: 'TypeScript Avançado & Clean Architecture',
+    code: 'TS-CLEAN-ARCH',
+    authority: 'Boas Práticas de Engenharia de Software',
+    validity: { pt: 'Habilitação Ativa', en: 'Certified & Active', es: 'Certificado y Activo' },
+    description: {
+      pt: 'Tipagem estrita, interfaces genéricas, princípios SOLID, padrões de projeto, desacoplamento modular e código limpo testável.',
+      en: 'Strict typing, generic interfaces, SOLID principles, design patterns, modular decoupling, and clean testable code.',
+      es: 'Tipado estricto, interfaces genéricas, principios SOLID, patrones de diseño y código limpio.',
+    },
+    iconName: 'Terminal',
+  },
+  {
+    id: 'dev_cert_backend',
+    name: 'Engenharia de Backend & APIs RESTful (Node.js & Express)',
+    code: 'NODE-REST-APIS',
+    authority: 'Construção e Arquitetura de APIs',
+    validity: { pt: 'Habilitação Ativa', en: 'Certified & Active', es: 'Certificado y Activo' },
+    description: {
+      pt: 'Construção de servidores Node.js, rotas REST protegidas, validação de esquemas, middleware de segurança, autenticação JWT e tratamento centralizado de erros.',
+      en: 'Building Node.js servers, secure REST routes, schema validation, security middleware, JWT authentication, and centralized error handling.',
+      es: 'Desarrollo de servidores Node.js, rutas REST seguras, validación de esquemas, middleware y JWT.',
+    },
+    iconName: 'Server',
+  },
+  {
+    id: 'dev_cert_databases',
+    name: 'Bancos de Dados Relacionais & NoSQL (PostgreSQL / Firestore)',
+    code: 'DB-SQL-NOSQL',
+    authority: 'Engenharia de Dados e Persistência Cloud',
+    validity: { pt: 'Habilitação Ativa', en: 'Certified & Active', es: 'Certificado y Activo' },
+    description: {
+      pt: 'Modelagem relacional, consultas SQL, índices, coleções em tempo real no Firestore e definição de regras de segurança no banco de dados.',
+      en: 'Relational schema modeling, SQL queries, indexes, real-time Firestore collections, and database security rules.',
+      es: 'Modelado relacional, consultas SQL, índices, colecciones NoSQL y reglas de seguridad.',
+    },
+    iconName: 'Database',
+  },
+  {
+    id: 'dev_cert_git_cicd',
+    name: 'Git, GitHub & Deploy Automatizado (CI/CD)',
+    code: 'GIT-DEVOPS-CICD',
+    authority: 'Fluxo Ágil e DevOps Essencial',
+    validity: { pt: 'Habilitação Ativa', en: 'Certified & Active', es: 'Certificado y Activo' },
+    description: {
+      pt: 'Versionamento com Git Flow, pull requests, branches, automação de deploys na Vercel/Firebase, gestão segura de variáveis de ambiente e deploy contínuo.',
+      en: 'Git Flow version control, pull requests, branch protection, automated Vercel/Firebase deployments, and secure secret management.',
+      es: 'Control de versiones con Git Flow, pull requests, despliegue automatizado y variables de entorno seguras.',
+    },
+    iconName: 'ShieldCheck',
+  },
+  {
+    id: 'dev_cert_senai_ti',
+    name: 'Competência Transversal em Tecnologia da Informação',
+    code: 'SENAI-TI-2020',
+    authority: 'SENAI Ary Torres (São Paulo/SP)',
+    validity: { pt: 'Certificado Oficial SENAI', en: 'Official SENAI Certificate', es: 'Certificado Oficial SENAI' },
+    description: {
+      pt: 'Sistemas operacionais, infraestrutura de redes, cabeamento estruturado, segurança da informação, governança de TI e modelo OSI.',
+      en: 'Operating systems, network infrastructure, structured cabling, information security, IT governance, and OSI model.',
+      es: 'Sistemas operativos, infraestructura de redes, cableado estructurado, seguridad y modelo OSI.',
+    },
+    iconName: 'Laptop',
+  },
+];
+
+export const DEVELOPER_SKILLS_MATRIX = [
+  {
+    id: 'dev_frontend',
+    category: {
+      pt: 'Frontend Moderno & Interfaces Reativas',
+      en: 'Modern Frontend & Reactive UI',
+      es: 'Frontend Moderno e Interfaces Reactivas',
+    },
+    skills: [
+      { name: 'TypeScript & JavaScript Moderno (ES6+)', level: 94 },
+      { name: 'Next.js 15 (App Router, Server Actions, SSR)', level: 92 },
+      { name: 'React 19 & Componentização Avançada', level: 95 },
+      { name: 'Tailwind CSS & Design Responsivo Mobile-First', level: 96 },
+      { name: 'HTML5 Semântico, CSS3 & Acessibilidade WCAG', level: 92 },
+    ],
+  },
+  {
+    id: 'dev_backend',
+    category: {
+      pt: 'Backend, Arquitetura & APIs RESTful',
+      en: 'Backend Architecture & RESTful APIs',
+      es: 'Backend, Arquitectura y APIs RESTful',
+    },
+    skills: [
+      { name: 'Node.js & Express Framework', level: 88 },
+      { name: 'Construção de APIs RESTful & Server Actions', level: 90 },
+      { name: 'Autenticação Segura (JWT, NextAuth, Tokens)', level: 88 },
+      { name: 'Princípios SOLID & Clean Architecture', level: 88 },
+      { name: 'Integrações de Serviços de Terceiros e Webhooks', level: 86 },
+    ],
+  },
+  {
+    id: 'dev_databases_devops',
+    category: {
+      pt: 'Bancos de Dados, Cloud & DevOps',
+      en: 'Databases, Cloud & DevOps',
+      es: 'Bases de Datos, Cloud y DevOps',
+    },
+    skills: [
+      { name: 'PostgreSQL & Consultas SQL Relacionais', level: 88 },
+      { name: 'Firebase Firestore & Supabase (Realtime NoSQL)', level: 90 },
+      { name: 'Git & Controle de Versão Colaborativo (GitHub)', level: 94 },
+      { name: 'Deploy Contínuo CI/CD (Vercel, Cloud)', level: 92 },
+      { name: 'Otimização de Performance Web Vitals & SEO', level: 90 },
+    ],
+  },
+];
+
 export const EDUCATION: EducationItem[] = [
   {
     id: 'eletricista_residencial',

@@ -12,25 +12,47 @@ import {
   Award,
   Sliders,
   Check,
+  Code2,
+  Terminal,
+  Server,
+  Database,
+  Laptop,
 } from 'lucide-react';
 import {
   EDUCATION,
+  DEVELOPER_EDUCATION,
+  DEVELOPER_CERTIFICATIONS,
+  DEVELOPER_SKILLS_MATRIX,
   EducationItem,
   I18N_STRINGS,
   Language,
 } from '@/lib/portfolio-data';
 import { CertificationItem, SkillCategory } from '@/lib/portfolio-store';
+import { TrackType } from '@/components/Hero';
 
 interface AboutProps {
   currentLang: Language;
+  currentTrack?: TrackType;
   certifications?: CertificationItem[];
   skillsMatrix?: SkillCategory[];
   education?: EducationItem[];
 }
 
-export function AboutAndQualifications({ currentLang, certifications, skillsMatrix, education }: AboutProps) {
+export function AboutAndQualifications({
+  currentLang,
+  currentTrack = 'all',
+  certifications,
+  skillsMatrix,
+  education,
+}: AboutProps) {
   const t = I18N_STRINGS[currentLang];
-  const educationList = education && education.length > 0 ? education : EDUCATION;
+
+  const educationList =
+    currentTrack === 'developer'
+      ? DEVELOPER_EDUCATION
+      : education && education.length > 0
+      ? education
+      : EDUCATION;
 
   const getCertIcon = (iconName: string) => {
     switch (iconName) {
@@ -40,13 +62,23 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
         return <Building className="w-5 h-5 text-blue-600" />;
       case 'Lock':
         return <Lock className="w-5 h-5 text-emerald-600" />;
+      case 'Code2':
+        return <Code2 className="w-5 h-5 text-blue-600" />;
+      case 'Terminal':
+        return <Terminal className="w-5 h-5 text-indigo-600" />;
+      case 'Server':
+        return <Server className="w-5 h-5 text-purple-600" />;
+      case 'Database':
+        return <Database className="w-5 h-5 text-emerald-600" />;
+      case 'Laptop':
+        return <Laptop className="w-5 h-5 text-blue-600" />;
       case 'Zap':
       default:
         return <Zap className="w-5 h-5 text-blue-600" />;
     }
   };
 
-  const certList = certifications || [
+  const defaultMaintenanceCerts: CertificationItem[] = [
     {
       id: 'nr10',
       name: 'NR-10 - Segurança em Instalações e Serviços em Eletricidade',
@@ -101,6 +133,22 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
     },
   ];
 
+  const certList: CertificationItem[] =
+    currentTrack === 'developer'
+      ? DEVELOPER_CERTIFICATIONS
+      : certifications && certifications.length > 0
+      ? certifications
+      : defaultMaintenanceCerts;
+
+  const currentSkills =
+    currentTrack === 'developer'
+      ? DEVELOPER_SKILLS_MATRIX.map((g) => ({
+          id: g.id,
+          title: g.category,
+          skills: g.skills,
+        }))
+      : (skillsMatrix || []);
+
   return (
     <section id="about" className="py-16 md:py-24 bg-white border-t border-slate-200">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
@@ -108,25 +156,61 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
         {/* Section Header */}
         <div className="max-w-3xl">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-200 mb-3">
-            <Award className="w-3.5 h-3.5" />
-            <span>{currentLang === 'pt' ? 'Qualificação & Formação' : currentLang === 'es' ? 'Cualificación y Formación' : 'Qualifications & Education'}</span>
+            {currentTrack === 'developer' ? <Code2 className="w-3.5 h-3.5" /> : <Award className="w-3.5 h-3.5" />}
+            <span>
+              {currentTrack === 'developer'
+                ? currentLang === 'pt'
+                  ? 'Qualificações Técnicas em Software'
+                  : currentLang === 'es'
+                  ? 'Cualificaciones Técnicas en Software'
+                  : 'Technical Software Qualifications'
+                : currentLang === 'pt'
+                ? 'Qualificação & Formação'
+                : currentLang === 'es'
+                ? 'Cualificación y Formación'
+                : 'Qualifications & Education'}
+            </span>
           </div>
           <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            {t.about.sectionTitle}
+            {currentTrack === 'developer'
+              ? currentLang === 'pt'
+                ? 'Formação Acadêmica, Certificações & Stack Tecnológica'
+                : currentLang === 'es'
+                ? 'Educación, Certificaciones y Stack Tecnológico'
+                : 'Education, Certifications & Tech Stack'
+              : t.about.sectionTitle}
           </h2>
           <p className="text-base sm:text-lg text-slate-600 mt-2">
-            {t.about.sectionSubtitle}
+            {currentTrack === 'developer'
+              ? currentLang === 'pt'
+                ? 'Competência técnica em engenharia de software full-stack, certificações em Next.js/React, TypeScript, APIs RESTful e computação moderna.'
+                : currentLang === 'es'
+                ? 'Competencia técnica en ingeniería de software full-stack, Next.js, React, TypeScript y arquitecturas web modernas.'
+                : 'Technical competence in full-stack software engineering, Next.js, React, TypeScript, and modern scalable web architecture.'
+              : t.about.sectionSubtitle}
           </p>
         </div>
 
-        {/* Education & Safety Certifications Grid */}
+        {/* Education & Certifications Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
           
           {/* Education Card (Col 1-5) */}
           <div className="lg:col-span-5 space-y-4">
             <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-2">
               <GraduationCap className="w-5 h-5 text-blue-600" />
-              <span>{currentLang === 'pt' ? 'Formação & Cursos Técnicos' : currentLang === 'es' ? 'Educación y Cursos Técnicos' : 'Education & Technical Courses'}</span>
+              <span>
+                {currentTrack === 'developer'
+                  ? currentLang === 'pt'
+                    ? 'Formação & Especializações em TI'
+                    : currentLang === 'es'
+                    ? 'Formación y Especialización en TI'
+                    : 'IT Education & Specializations'
+                  : currentLang === 'pt'
+                  ? 'Formação & Cursos Técnicos'
+                  : currentLang === 'es'
+                  ? 'Educación y Cursos Técnicos'
+                  : 'Education & Technical Courses'}
+              </span>
             </h3>
 
             <div className="space-y-3.5">
@@ -160,9 +244,9 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
                     {edu.description[currentLang] || edu.description.pt}
                   </p>
 
-                  {edu.topics && edu.topics[currentLang] && edu.topics[currentLang].length > 0 && (
+                  {edu.topics && (edu.topics[currentLang] || edu.topics.pt) && (
                     <div className="mt-3 pt-2.5 border-t border-slate-200/80 space-y-1.5">
-                      {edu.topics[currentLang].slice(0, 3).map((topic, tIdx) => (
+                      {(edu.topics[currentLang] || edu.topics.pt).slice(0, 4).map((topic, tIdx) => (
                         <div key={tIdx} className="flex items-start gap-1.5 text-[11px] text-slate-700">
                           <Check className="w-3.5 h-3.5 text-blue-600 shrink-0 mt-0.5" />
                           <span>{topic}</span>
@@ -179,7 +263,15 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
           <div className="lg:col-span-7 space-y-4">
             <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2 mb-2">
               <ShieldCheck className="w-5 h-5 text-emerald-600" />
-              <span>{t.about.certificationsTitle}</span>
+              <span>
+                {currentTrack === 'developer'
+                  ? currentLang === 'pt'
+                    ? 'Habilitações & Certificados Técnicos'
+                    : currentLang === 'es'
+                    ? 'Habilitaciones y Certificados Técnicos'
+                    : 'Technical Certifications & Badges'
+                  : t.about.certificationsTitle}
+              </span>
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -212,7 +304,19 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
 
                   <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center gap-1.5 text-[11px] text-slate-500 font-medium">
                     <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                    <span>{currentLang === 'pt' ? 'Conforme Normas Regulamentadoras' : currentLang === 'es' ? 'Conforme Normativa Laboral' : 'Labor Standard Compliant'}</span>
+                    <span>
+                      {currentTrack === 'developer'
+                        ? currentLang === 'pt'
+                          ? 'Práticas Alinhadas à Engenharia Moderna'
+                          : currentLang === 'es'
+                          ? 'Prácticas Alineadas a la Ingeniería Moderna'
+                          : 'Modern Engineering Standards Compliant'
+                        : currentLang === 'pt'
+                        ? 'Conforme Normas Regulamentadoras'
+                        : currentLang === 'es'
+                        ? 'Conforme Normativa Laboral'
+                        : 'Labor Standard Compliant'}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -221,61 +325,87 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
         </div>
 
         {/* Technical Skills Matrix */}
-        <div className="pt-6">
-          <div className="flex items-center gap-2 mb-6">
-            <Sliders className="w-5 h-5 text-blue-600" />
-            <h3 className="text-xl font-extrabold text-slate-900">
-              {t.about.skillsTitle}
-            </h3>
-          </div>
+        {currentSkills.length > 0 && (
+          <div className="pt-6">
+            <div className="flex items-center gap-2 mb-6">
+              <Sliders className="w-5 h-5 text-blue-600" />
+              <h3 className="text-xl font-extrabold text-slate-900">
+                {currentTrack === 'developer'
+                  ? currentLang === 'pt'
+                    ? 'Matriz de Habilidades & Proficiência Técnica'
+                    : currentLang === 'es'
+                    ? 'Matriz de Habilidades y Competencias Técnicas'
+                    : 'Software Skills & Proficiency Matrix'
+                  : t.about.skillsTitle}
+              </h3>
+            </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {(skillsMatrix || []).map((group) => (
-              <div
-                key={group.id}
-                className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between shadow-2xs"
-              >
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-blue-700 border-b border-slate-200 pb-2 mb-4">
-                    {group.title[currentLang] || group.title.pt}
-                  </h4>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {currentSkills.map((group) => (
+                <div
+                  key={group.id}
+                  className="p-5 rounded-2xl bg-slate-50 border border-slate-200 flex flex-col justify-between shadow-2xs"
+                >
+                  <div>
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-blue-700 border-b border-slate-200 pb-2 mb-4">
+                      {group.title[currentLang] || group.title.pt}
+                    </h4>
 
-                  <div className="space-y-3.5">
-                    {group.skills.map((skill, sIdx) => (
-                      <div key={sIdx}>
-                        <div className="flex justify-between text-xs mb-1">
-                          <span className="text-slate-800 font-semibold">{skill.name}</span>
-                          <span className="text-slate-500 font-mono text-[11px]">{skill.level}%</span>
+                    <div className="space-y-3.5">
+                      {group.skills.map((skill, sIdx) => (
+                        <div key={sIdx}>
+                          <div className="flex justify-between text-xs mb-1">
+                            <span className="text-slate-800 font-semibold">{skill.name}</span>
+                            <span className="text-slate-500 font-mono text-[11px]">{skill.level}%</span>
+                          </div>
+                          <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
+                            <div
+                              className="h-full bg-blue-600 rounded-full transition-all"
+                              style={{ width: `${skill.level}%` }}
+                            />
+                          </div>
                         </div>
-                        <div className="h-1.5 w-full bg-slate-200 rounded-full overflow-hidden">
-                          <div
-                            className="h-full bg-blue-600 rounded-full transition-all"
-                            style={{ width: `${skill.level}%` }}
-                          />
-                        </div>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Safety Philosophy Banner */}
+        {/* Philosophy Banner */}
         <div className="p-6 sm:p-8 rounded-2xl bg-slate-900 text-white border border-slate-800 shadow-md relative overflow-hidden">
           <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
-            <ShieldCheck className="w-48 h-48 text-amber-400" />
+            {currentTrack === 'developer' ? (
+              <Code2 className="w-48 h-48 text-blue-400" />
+            ) : (
+              <ShieldCheck className="w-48 h-48 text-amber-400" />
+            )}
           </div>
 
           <div className="relative max-w-3xl">
             <div className="flex items-center gap-2 text-amber-400 text-xs font-bold uppercase tracking-wider mb-2">
-              <ShieldCheck className="w-4 h-4" />
-              <span>{t.about.philosophyTitle}</span>
+              {currentTrack === 'developer' ? <Terminal className="w-4 h-4 text-blue-400" /> : <ShieldCheck className="w-4 h-4" />}
+              <span className={currentTrack === 'developer' ? 'text-blue-400' : 'text-amber-400'}>
+                {currentTrack === 'developer'
+                  ? currentLang === 'pt'
+                    ? 'Princípios de Desenvolvimento'
+                    : currentLang === 'es'
+                    ? 'Principios de Desarrollo'
+                    : 'Engineering Philosophy'
+                  : t.about.philosophyTitle}
+              </span>
             </div>
 
             <h3 className="text-xl sm:text-2xl font-black text-white leading-snug">
-              {currentLang === 'pt'
+              {currentTrack === 'developer'
+                ? currentLang === 'pt'
+                  ? '"Código limpo, arquitetura desacoplada, alta performance e foco total na experiência do usuário."'
+                  : currentLang === 'es'
+                  ? '"Código limpio, arquitectura desacoplada, alto rendimiento y enfoque en la experiencia de usuario."'
+                  : '"Clean code, decoupled architecture, top-tier performance, and relentless focus on user experience."'
+                : currentLang === 'pt'
                 ? '"Segurança em primeiro lugar e disponibilidade contínua da infraestrutura."'
                 : currentLang === 'es'
                 ? '"La seguridad como máxima prioridad y la disponibilidad continua."'
@@ -283,7 +413,13 @@ export function AboutAndQualifications({ currentLang, certifications, skillsMatr
             </h3>
 
             <p className="text-sm sm:text-base text-slate-300 mt-3 leading-relaxed">
-              {t.about.philosophyText}
+              {currentTrack === 'developer'
+                ? currentLang === 'pt'
+                  ? 'Compromisso com soluções escaláveis, documentadas, orientadas a boas práticas e entrega contínua com máxima estabilidade em produção.'
+                  : currentLang === 'es'
+                  ? 'Compromiso con soluciones escalables, documentadas, buenas prácticas y despliegue continuo con alta estabilidad.'
+                  : 'Committed to building scalable, documented, and resilient applications with automated deployment and reliable uptime.'
+                : t.about.philosophyText}
             </p>
           </div>
         </div>
