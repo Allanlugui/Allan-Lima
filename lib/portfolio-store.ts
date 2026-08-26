@@ -90,6 +90,7 @@ export interface PersonalInfo {
   phone: string;
   location: string;
   linkedin: string;
+  website?: string;
   whatsappNumber: string;
   availability: Record<Language, string>;
   jllExperience: Record<Language, string>;
@@ -329,6 +330,7 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioDatabase = {
     whatsappNumber: '5511915777803',
     location: 'São Paulo - SP, Brasil',
     linkedin: 'https://www.linkedin.com/in/allan-ls-lima',
+    website: 'https://allan-lima.vercel.app',
     availability: {
       pt: 'Disponível para contratação (CLT/PJ) em Manutenção e Desenvolvimento de Software',
       en: 'Available for employment in Facilities Maintenance & Full-Stack Software Development',

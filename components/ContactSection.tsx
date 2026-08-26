@@ -10,6 +10,8 @@ import {
   MessageSquare,
   ShieldCheck,
   CheckCircle,
+  Globe,
+  ExternalLink,
 } from 'lucide-react';
 import { I18N_STRINGS, Language } from '@/lib/portfolio-data';
 import { PersonalInfo } from '@/lib/portfolio-store';
@@ -23,6 +25,7 @@ export function ContactSection({ currentLang, personalInfo }: ContactSectionProp
   const t = I18N_STRINGS[currentLang];
   const email = personalInfo?.email || 'jallanluiz@gmail.com';
   const linkedin = personalInfo?.linkedin || 'https://www.linkedin.com/in/allan-ls-lima';
+  const website = personalInfo?.website || 'https://allan-lima.vercel.app';
   const location = personalInfo?.location || 'São Paulo - SP, Brasil';
 
   const [formData, setFormData] = useState({
@@ -124,6 +127,29 @@ export function ContactSection({ currentLang, personalInfo }: ContactSectionProp
                     className="text-sm font-bold text-blue-600 hover:underline"
                   >
                     linkedin.com/in/allan-ls-lima
+                  </a>
+                </div>
+              </div>
+            </div>
+
+            {/* Official Website Card */}
+            <div className="p-6 rounded-2xl bg-white border border-slate-200 space-y-3 shadow-2xs">
+              <div className="flex items-center gap-3">
+                <div className="p-3 rounded-xl bg-indigo-50 text-indigo-700 border border-indigo-200">
+                  <Globe className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                    {currentLang === 'pt' ? 'Portfólio Oficial Online' : currentLang === 'es' ? 'Portafolio Oficial Online' : 'Official Online Portfolio'}
+                  </h4>
+                  <a
+                    href={website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-bold text-indigo-600 hover:underline inline-flex items-center gap-1"
+                  >
+                    <span>allan-lima.vercel.app</span>
+                    <ExternalLink className="w-3.5 h-3.5" />
                   </a>
                 </div>
               </div>

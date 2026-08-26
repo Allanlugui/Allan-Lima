@@ -83,8 +83,17 @@ export function Footer({ currentLang, personalInfo, onOpenAdminLogin }: FooterPr
 
         {/* Bottom copyright */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-slate-500 text-center sm:text-left">
-          <div>
-            © {new Date().getFullYear()} Allan Luiz Silveira Lima. {t.footer.rights}
+          <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+            <span>© {new Date().getFullYear()} Allan Luiz Silveira Lima. {t.footer.rights}</span>
+            <span className="hidden sm:inline">•</span>
+            <a
+              href="https://allan-lima.vercel.app"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-blue-600 hover:underline font-semibold"
+            >
+              allan-lima.vercel.app
+            </a>
           </div>
           <div className="text-slate-600 italic">
             &ldquo;{t.footer.quote}&rdquo;

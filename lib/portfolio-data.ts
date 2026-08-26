@@ -71,6 +71,7 @@ export const PERSONAL_INFO = {
   address: 'Rua José de Barros Magaldi, 1557, Jardim São João, CEP 05815-010, São Paulo - SP',
   location: 'São Paulo - SP, Brasil',
   linkedin: 'https://www.linkedin.com/in/allan-ls-lima',
+  website: 'https://allan-lima.vercel.app',
   availability: {
     pt: 'Disponível para contratação (CLT/PJ) em Manutenção e Desenvolvimento de Software',
     en: 'Available for employment in Facilities Maintenance & Full-Stack Software Development',
