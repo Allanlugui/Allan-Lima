@@ -2,9 +2,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { Header } from '@/components/Header';
-import { Hero } from '@/components/Hero';
+import { Hero, TrackType } from '@/components/Hero';
 import { AboutAndQualifications } from '@/components/AboutAndQualifications';
 import { ExperienceTimeline } from '@/components/ExperienceTimeline';
+import { FieldActivityGallery } from '@/components/FieldActivityGallery';
 import { ProjectGallery } from '@/components/ProjectGallery';
 import { BlogWorkLogs } from '@/components/BlogWorkLogs';
 import { InteractiveDiagnosticTool } from '@/components/InteractiveDiagnosticTool';
@@ -23,8 +24,10 @@ import { Language } from '@/lib/portfolio-data';
 
 export default function HomePage() {
   const [currentLang, setCurrentLang] = useState<Language>('pt');
+  const [currentTrack, setCurrentTrack] = useState<TrackType>('all');
   const [portfolioData, setPortfolioData] = useState<PortfolioDatabase>(() => getPortfolioData());
   const [isResumeModalOpen, setIsResumeModalOpen] = useState<boolean>(false);
+  const [resumeModalTrack, setResumeModalTrack] = useState<TrackType>('all');
   const [isAdminModalOpen, setIsAdminModalOpen] = useState<boolean>(false);
   const [isAdminDashboardOpen, setIsAdminDashboardOpen] = useState<boolean>(false);
   const [isAdminLoggedIn, setIsAdminLoggedIn] = useState<boolean>(false);
@@ -35,6 +38,10 @@ export default function HomePage() {
       const savedLang = localStorage.getItem('allan_portfolio_lang') as Language;
       if (savedLang && (savedLang === 'pt' || savedLang === 'en' || savedLang === 'es')) {
         setCurrentLang(savedLang);
+      }
+      const savedTrack = localStorage.getItem('allan_portfolio_track') as TrackType;
+      if (savedTrack && (savedTrack === 'maintenance' || savedTrack === 'developer' || savedTrack === 'all')) {
+        setCurrentTrack(savedTrack);
       }
       const token = localStorage.getItem(ADMIN_AUTH_TOKEN_KEY);
       if (token && token.startsWith('admin_session_')) {
@@ -53,6 +60,20 @@ export default function HomePage() {
     } catch {
       // Ignore
     }
+  };
+
+  const handleTrackChange = (track: TrackType) => {
+    setCurrentTrack(track);
+    try {
+      localStorage.setItem('allan_portfolio_track', track);
+    } catch {
+      // Ignore
+    }
+  };
+
+  const handleOpenResume = (track?: TrackType) => {
+    setResumeModalTrack(track || currentTrack);
+    setIsResumeModalOpen(true);
   };
 
   const handleAdminTrigger = () => {
@@ -99,17 +120,21 @@ export default function HomePage() {
       <Header
         currentLang={currentLang}
         onLanguageChange={handleLanguageChange}
-        onOpenResumeModal={() => setIsResumeModalOpen(true)}
+        currentTrack={currentTrack}
+        onTrackChange={handleTrackChange}
+        onOpenResumeModal={() => handleOpenResume()}
         onOpenAdminLogin={handleAdminTrigger}
         isAdminLoggedIn={isAdminLoggedIn}
       />
 
       {/* Main Content Flow */}
       <main className="flex-grow">
-        {/* 1. Hero & Professional Summary */}
+        {/* 1. Hero & Professional Summary with Dual-Track Selector */}
         <Hero
           currentLang={currentLang}
-          onOpenResumeModal={() => setIsResumeModalOpen(true)}
+          currentTrack={currentTrack}
+          onTrackChange={handleTrackChange}
+          onOpenResumeModal={(t) => handleOpenResume(t)}
           personalInfo={portfolioData.personalInfo}
         />
 
@@ -120,31 +145,45 @@ export default function HomePage() {
           skillsMatrix={portfolioData.skillsMatrix}
         />
 
-        {/* 3. Professional Experience (JLL 1 year 1 month + Projects) */}
+        {/* 3. Professional Experience Timeline (ATS, JLL, ITC, Edgar Santana, JCS, Concrepoxi, Capanema, Madam Mad) */}
         <ExperienceTimeline
           currentLang={currentLang}
           experiences={portfolioData.experiences}
         />
 
-        {/* 4. Featured Projects & Work Gallery (Filterable & Searchable) */}
-        <ProjectGallery
-          currentLang={currentLang}
-          projects={portfolioData.projects}
-        />
+        {/* 4. Track A: Official Field Maintenance Photographic Gallery */}
+        {(currentTrack === 'all' || currentTrack === 'maintenance') && (
+          <section className="py-16 md:py-24 bg-slate-100/70 border-t border-slate-200">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <FieldActivityGallery
+                currentLang={currentLang}
+                activities={portfolioData.fieldActivities}
+              />
+            </div>
+          </section>
+        )}
 
-        {/* 5. Technical Work Logs & Maintenance Blog Case Studies */}
+        {/* 5. Track B: Full-Stack Software Projects Showcase */}
+        {(currentTrack === 'all' || currentTrack === 'developer') && (
+          <ProjectGallery
+            currentLang={currentLang}
+            projects={portfolioData.projects}
+          />
+        )}
+
+        {/* 6. Technical Work Logs & Maintenance Case Studies */}
         <BlogWorkLogs
           currentLang={currentLang}
           posts={portfolioData.blogPosts}
         />
 
-        {/* 6. Interactive Diagnostic & Electrical Sizing Tool + AI Assistant */}
+        {/* 7. Interactive Diagnostic & Electrical Sizing Tool */}
         <InteractiveDiagnosticTool currentLang={currentLang} />
 
-        {/* 7. Professional Reference Contact for Recruiters */}
+        {/* 8. Professional Reference Contact for Recruiters */}
         <ProfessionalReferences currentLang={currentLang} />
 
-        {/* 8. Direct Contact & Socials */}
+        {/* 9. Direct Contact & Socials */}
         <ContactSection
           currentLang={currentLang}
           personalInfo={portfolioData.personalInfo}
@@ -163,6 +202,7 @@ export default function HomePage() {
         isOpen={isResumeModalOpen}
         onClose={() => setIsResumeModalOpen(false)}
         currentLang={currentLang}
+        initialTrack={resumeModalTrack}
         personalInfo={portfolioData.personalInfo}
         experiences={portfolioData.experiences}
         certifications={portfolioData.certifications}

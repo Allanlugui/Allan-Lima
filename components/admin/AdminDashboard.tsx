@@ -26,11 +26,14 @@ import {
   Star,
   Clock,
   Layers,
-  FileText
+  FileText,
+  Camera,
+  Code2,
 } from 'lucide-react';
 import {
   PortfolioDatabase,
   ProjectItem,
+  FieldActivityItem,
   ExperienceItem,
   BlogPostItem,
   savePortfolioData,
@@ -46,11 +49,14 @@ interface AdminDashboardProps {
 
 export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboardProps) {
   const [data, setData] = useState<PortfolioDatabase>(initialData);
-  const [activeTab, setActiveTab] = useState<'overview' | 'projects' | 'experience' | 'skills' | 'blog' | 'profile' | 'backup'>('overview');
+  const [activeTab, setActiveTab] = useState<'overview' | 'field_activities' | 'projects' | 'experience' | 'skills' | 'blog' | 'profile' | 'backup'>('overview');
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
   // Editing state for modals/forms
+  const [editingFieldActivity, setEditingFieldActivity] = useState<FieldActivityItem | null>(null);
+  const [isNewFieldActivity, setIsNewFieldActivity] = useState(false);
+
   const [editingProject, setEditingProject] = useState<ProjectItem | null>(null);
   const [isNewProject, setIsNewProject] = useState(false);
 
@@ -81,6 +87,36 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
     }).catch((err) => console.warn('Server sync background notice:', err));
 
     showToast('success', message);
+  };
+
+  // Handlers for Field Activities (Track A)
+  const handleSaveFieldActivity = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingFieldActivity) return;
+
+    let updated = [...(data.fieldActivities || [])];
+    if (isNewFieldActivity) {
+      updated = [editingFieldActivity, ...updated];
+    } else {
+      updated = updated.map((item) => (item.id === editingFieldActivity.id ? editingFieldActivity : item));
+    }
+
+    persistChanges({ ...data, fieldActivities: updated }, 'Registro fotográfico de campo atualizado!');
+    setEditingFieldActivity(null);
+  };
+
+  const handleDeleteFieldActivity = (id: string) => {
+    if (confirm('Tem certeza de que deseja excluir este registro fotográfico de campo?')) {
+      const updated = (data.fieldActivities || []).filter((item) => item.id !== id);
+      persistChanges({ ...data, fieldActivities: updated }, 'Registro de campo removido.');
+    }
+  };
+
+  const handleToggleFieldActivityHighlight = (id: string) => {
+    const updated = (data.fieldActivities || []).map((item) =>
+      item.id === id ? { ...item, highlight: !item.highlight } : item
+    );
+    persistChanges({ ...data, fieldActivities: updated }, 'Status de destaque atualizado.');
   };
 
   // Handlers for Projects
@@ -283,6 +319,23 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
             </button>
 
             <button
+              onClick={() => setActiveTab('field_activities')}
+              className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
+                activeTab === 'field_activities'
+                  ? 'bg-amber-600 text-white shadow-xs'
+                  : 'text-slate-700 hover:bg-slate-100'
+              }`}
+            >
+              <div className="flex items-center gap-2.5">
+                <Camera className="w-4 h-4" />
+                <span>Fotos de Campo</span>
+              </div>
+              <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-800">
+                {data.fieldActivities?.length || 0}
+              </span>
+            </button>
+
+            <button
               onClick={() => setActiveTab('projects')}
               className={`w-full flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all ${
                 activeTab === 'projects'
@@ -291,8 +344,8 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
               }`}
             >
               <div className="flex items-center gap-2.5">
-                <FolderGit2 className="w-4 h-4" />
-                <span>Projetos & Obras</span>
+                <Code2 className="w-4 h-4" />
+                <span>Projetos Software</span>
               </div>
               <span className="px-1.5 py-0.5 rounded-full text-[10px] bg-slate-200 text-slate-800 group-hover:bg-slate-300">
                 {data.projects.length}
@@ -515,6 +568,257 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
                     </button>
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* TAB: FIELD ACTIVITIES (TRACK A) */}
+            {activeTab === 'field_activities' && (
+              <div className="space-y-6">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-4 rounded-2xl border border-slate-200 shadow-xs">
+                  <div>
+                    <h2 className="text-base font-bold text-slate-900">Registros Fotográficos de Manutenção em Campo (Trilha A)</h2>
+                    <p className="text-xs text-slate-500">Gerencie fotos reais, equipamentos, normas técnicas e descrições de intervenções em campo.</p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setIsNewFieldActivity(true);
+                      setEditingFieldActivity({
+                        id: `fa-${Date.now()}`,
+                        title: { pt: '', en: '', es: '' },
+                        category: 'electrical',
+                        categoryLabel: { pt: 'Painéis & Elétrica', en: 'Panels & Electrical', es: 'Tableros y Eléctrica' },
+                        location: 'JLL Serviços de Manutenção Predial',
+                        date: new Date().toISOString().slice(0, 7),
+                        equipment: [],
+                        standards: ['NR-10', 'NBR 5410'],
+                        description: { pt: '', en: '', es: '' },
+                        image: 'https://picsum.photos/seed/maintenance-field/800/600',
+                        highlight: false,
+                      });
+                    }}
+                    className="px-4 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl flex items-center gap-1.5 shadow-sm transition-all shrink-0 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Nova Foto de Campo</span>
+                  </button>
+                </div>
+
+                {/* List */}
+                <div className="space-y-3">
+                  {(data.fieldActivities || []).map((item) => (
+                    <div
+                      key={item.id}
+                      className="bg-white p-4 rounded-xl border border-slate-200 shadow-xs hover:border-slate-300 transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+                    >
+                      <div className="flex items-start gap-4 min-w-0">
+                        {item.image && (
+                          /* eslint-disable-next-line @next/next/no-img-element */
+                          <img
+                            src={item.image}
+                            alt={item.title.pt}
+                            className="w-16 h-16 rounded-lg object-cover border border-slate-200 shrink-0"
+                          />
+                        )}
+                        <div className="space-y-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200">
+                              {item.categoryLabel.pt}
+                            </span>
+                            {item.highlight && (
+                              <span className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300 flex items-center gap-1">
+                                <Star className="w-3 h-3 fill-amber-500 text-amber-500" />
+                                Destaque
+                              </span>
+                            )}
+                            <span className="text-[11px] text-slate-500 font-medium">
+                              {item.date} • {item.location}
+                            </span>
+                          </div>
+                          <h3 className="text-sm font-bold text-slate-900 truncate">{item.title.pt}</h3>
+                          <p className="text-xs text-slate-600 line-clamp-2">{item.description.pt}</p>
+                          <div className="flex flex-wrap gap-1 pt-0.5">
+                            {item.standards.map((st, i) => (
+                              <span key={i} className="text-[10px] bg-emerald-50 text-emerald-800 border border-emerald-200 px-1.5 py-0.5 rounded font-bold">
+                                {st}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0 self-end sm:self-center">
+                        <button
+                          onClick={() => handleToggleFieldActivityHighlight(item.id)}
+                          title={item.highlight ? 'Remover destaque' : 'Destacar'}
+                          className={`p-2 rounded-lg border text-xs font-semibold transition-colors cursor-pointer ${
+                            item.highlight
+                              ? 'bg-amber-50 border-amber-300 text-amber-600 hover:bg-amber-100'
+                              : 'bg-slate-50 border-slate-200 text-slate-500 hover:bg-slate-100'
+                          }`}
+                        >
+                          <Star className={`w-4 h-4 ${item.highlight ? 'fill-amber-500 text-amber-500' : ''}`} />
+                        </button>
+                        <button
+                          onClick={() => {
+                            setIsNewFieldActivity(false);
+                            setEditingFieldActivity(JSON.parse(JSON.stringify(item)));
+                          }}
+                          className="p-2 bg-slate-100 hover:bg-amber-50 hover:text-amber-700 text-slate-700 rounded-lg text-xs font-semibold transition-colors border border-slate-200 cursor-pointer"
+                        >
+                          <Edit3 className="w-4 h-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteFieldActivity(item.id)}
+                          className="p-2 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg text-xs font-semibold transition-colors border border-red-200 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Edit Field Activity Modal */}
+                {editingFieldActivity && (
+                  <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+                    <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-3xl w-full p-6 space-y-4 my-8 max-h-[90vh] overflow-y-auto">
+                      <div className="flex items-center justify-between border-b border-slate-100 pb-3">
+                        <h3 className="text-base font-bold text-slate-900">
+                          {isNewFieldActivity ? 'Novo Registro Fotográfico de Campo' : 'Editar Foto de Campo'}
+                        </h3>
+                        <button
+                          onClick={() => setEditingFieldActivity(null)}
+                          className="text-slate-400 hover:text-slate-600 text-sm font-bold cursor-pointer"
+                        >
+                          ✕
+                        </button>
+                      </div>
+
+                      <form onSubmit={handleSaveFieldActivity} className="space-y-4">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              Categoria da Atividade
+                            </label>
+                            <select
+                              value={editingFieldActivity.category}
+                              onChange={(e) => {
+                                const cat = e.target.value as FieldActivityItem['category'];
+                                const labels: Record<FieldActivityItem['category'], Record<Language, string>> = {
+                                  predictive: { pt: 'Termografia Preditiva', en: 'Predictive Thermography', es: 'Termografía Predictiva' },
+                                  generators_ups: { pt: 'Geradores & No-breaks', en: 'Generators & UPS', es: 'Generadores & SAI' },
+                                  electrical: { pt: 'QGBT & Comandos', en: 'Switchboards & Controls', es: 'QGBT y Mandos' },
+                                  hydraulic: { pt: 'Hidráulica & Bombas', en: 'Hydraulics & Pumps', es: 'Fontanería y Bombas' },
+                                  civil_painting: { pt: 'Civil & Pintura Epóxi', en: 'Civil & Epoxy Coating', es: 'Civil y Pintura Epoxi' },
+                                };
+                                setEditingFieldActivity({
+                                  ...editingFieldActivity,
+                                  category: cat,
+                                  categoryLabel: labels[cat],
+                                });
+                              }}
+                              className="w-full text-xs font-semibold px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                            >
+                              <option value="predictive">Termografia Preditiva</option>
+                              <option value="generators_ups">Geradores & No-breaks (UPS)</option>
+                              <option value="electrical">QGBT & Comandos de Motores</option>
+                              <option value="hydraulic">Hidráulica & Bombas</option>
+                              <option value="civil_painting">Civil & Pintura Epóxi</option>
+                            </select>
+                          </div>
+
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                              URL da Foto
+                            </label>
+                            <input
+                              type="text"
+                              required
+                              value={editingFieldActivity.image}
+                              onChange={(e) => setEditingFieldActivity({ ...editingFieldActivity, image: e.target.value })}
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                              placeholder="https://exemplo.com/foto.jpg"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Título da Atividade (Português)
+                          </label>
+                          <input
+                            type="text"
+                            required
+                            value={editingFieldActivity.title.pt}
+                            onChange={(e) =>
+                              setEditingFieldActivity({
+                                ...editingFieldActivity,
+                                title: { ...editingFieldActivity.title, pt: e.target.value },
+                              })
+                            }
+                            className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                            placeholder="Ex: Inspeção Termográfica e Reaperto em QGBT 800A"
+                          />
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Local / Empresa</label>
+                            <input
+                              type="text"
+                              value={editingFieldActivity.location}
+                              onChange={(e) => setEditingFieldActivity({ ...editingFieldActivity, location: e.target.value })}
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                            />
+                          </div>
+                          <div>
+                            <label className="block text-xs font-bold text-slate-700 uppercase mb-1">Data (AAAA-MM)</label>
+                            <input
+                              type="text"
+                              value={editingFieldActivity.date}
+                              onChange={(e) => setEditingFieldActivity({ ...editingFieldActivity, date: e.target.value })}
+                              className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                            />
+                          </div>
+                        </div>
+
+                        <div>
+                          <label className="block text-xs font-bold text-slate-700 uppercase mb-1">
+                            Descrição Técnica Detalhada (Português)
+                          </label>
+                          <textarea
+                            rows={3}
+                            required
+                            value={editingFieldActivity.description.pt}
+                            onChange={(e) =>
+                              setEditingFieldActivity({
+                                ...editingFieldActivity,
+                                description: { ...editingFieldActivity.description, pt: e.target.value },
+                              })
+                            }
+                            className="w-full text-xs px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl focus:bg-white focus:outline-blue-600"
+                          />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-100">
+                          <button
+                            type="button"
+                            onClick={() => setEditingFieldActivity(null)}
+                            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl"
+                          >
+                            Cancelar
+                          </button>
+                          <button
+                            type="submit"
+                            className="px-6 py-2 bg-amber-600 hover:bg-amber-700 text-white font-bold text-xs rounded-xl shadow-xs"
+                          >
+                            Salvar Registro Fotográfico
+                          </button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
 

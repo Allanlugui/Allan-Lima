@@ -1,5 +1,19 @@
 import { Language, PROJECTS } from './portfolio-data';
 
+export interface FieldActivityItem {
+  id: string;
+  title: Record<Language, string>;
+  category: 'electrical' | 'generators_ups' | 'predictive' | 'hydraulic' | 'civil_painting';
+  categoryLabel: Record<Language, string>;
+  location: string;
+  date: string;
+  equipment: string[];
+  standards: string[];
+  description: Record<Language, string>;
+  image: string;
+  highlight?: boolean;
+}
+
 export interface ProjectItem {
   id: string;
   title: Record<Language, string>;
@@ -92,11 +106,215 @@ export interface PortfolioDatabase {
   personalInfo: PersonalInfo;
   experiences: ExperienceItem[];
   projects: ProjectItem[];
+  fieldActivities: FieldActivityItem[];
   skillsMatrix: SkillCategory[];
   certifications: CertificationItem[];
   blogPosts: BlogPostItem[];
   lastUpdated: string;
 }
+
+export const DEFAULT_FIELD_ACTIVITIES: FieldActivityItem[] = [
+  {
+    id: 'fa_qgbt_termografia',
+    title: {
+      pt: 'Inspeção Termográfica Preditiva e Reaperto em QGBT 800A',
+      en: 'Predictive Infrared Thermography & Torquing on 800A Main Distribution Panel',
+      es: 'Inspección Termográfica Predictiva y Reapriete en QGBT 800A',
+    },
+    category: 'predictive',
+    categoryLabel: {
+      pt: 'Termografia Preditiva',
+      en: 'Predictive Thermography',
+      es: 'Termografía Predictiva',
+    },
+    location: 'JLL & ATS Facilities - Prédio Corporativo A+',
+    date: '2026-08',
+    equipment: ['Câmera Termográfica Fluke Ti401', 'Torquímetro Dinamométrico Calibrado', 'Disjuntores Schneider Compact NSX', 'Barramentos de Cobre Eletrolítico'],
+    standards: ['NR-10 Básico / SEP', 'NBR 5410', 'Procedimento LOTO'],
+    description: {
+      pt: 'Varredura infravermelha com termovisor sob pico de carga da edificação (85% da demanda). Identificação de aquecimento em conexões de barramentos principais, reaperto dinâmico com torquímetro calibrado conforme torque do fabricante e redução térmica de 68°C para 34°C com 100% de confiabilidade.',
+      en: 'Full infrared thermographic scan under 85% peak facility load. Identified localized thermal anomalies on main copper busbars, performed precision dynamic torquing according to manufacturer specs, reducing connection temps from 68°C to 34°C with zero downtime.',
+      es: 'Barrido termográfico infrarrojo bajo 85% de carga máxima. Identificación de puntos calientes en barras de cobre, reapriete dinamométrico calibrado y reducción térmica de 68°C a 34°C con cero cortes.',
+    },
+    image: 'https://picsum.photos/seed/field-qgbt-thermo/800/600',
+    highlight: true,
+  },
+  {
+    id: 'fa_gmg_transferencia',
+    title: {
+      pt: 'Rotina de Teste com Carga e Manutenção em GMG Cummins 250kVA e UPS',
+      en: '250kVA Cummins Diesel Generator & Industrial UPS Load-Transfer Routine',
+      es: 'Prueba con Carga y Mantenimiento en GMG Cummins 250kVA y SAI/UPS',
+    },
+    category: 'generators_ups',
+    categoryLabel: {
+      pt: 'Grupos Geradores & No-breaks',
+      en: 'Generators & UPS',
+      es: 'Generadores y SAI/UPS',
+    },
+    location: 'JLL Serviços de Manutenção Predial',
+    date: '2026-07',
+    equipment: ['Gerador Cummins 250kVA', 'Controlador DeepSea DSE7320', 'UPS APC Symmetra 40kVA', 'Banco de Baterias VRLA 24Vcc'],
+    standards: ['NR-10', 'NR-20', 'NBR 14039', 'Procedimento de Emergência JLL'],
+    description: {
+      pt: 'Simulação mensal de queda de energia da concessionária para teste da chave de transferência automática (ATS/QTA). Monitoramento da comutação em 7.2 segundos, sustentação 0ms de cargas críticas via UPS dupla conversão e verificação de aquecimento de bloco, óleo lubrificante e densidade do diesel.',
+      en: 'Monthly simulated grid outage test for Automatic Transfer Switch (ATS). Monitored 7.2s generator startup and 0ms instantaneous load sustain via double-conversion UPS. Verified block heating (40°C), oil viscosity, and 24Vdc starter battery bank health.',
+      es: 'Simulación mensual de corte de red eléctrica para prueba de conmutador ATS. Monitoreo de arranque en 7.2 segundos, sostenimiento de cargas críticas por SAI y verificación de fluidos y baterías.',
+    },
+    image: 'https://picsum.photos/seed/field-generator-diesel/800/600',
+    highlight: true,
+  },
+  {
+    id: 'fa_quadro_bombas',
+    title: {
+      pt: 'Montagem em Bancada e Instalação de Painel Duplex de Bombas 5CV',
+      en: 'Bench Assembly & Commissioning of 5HP Duplex Booster Pump Panel',
+      es: 'Montaje en Taller e Instalación de Cuadro Duplex de Bombas 5CV',
+    },
+    category: 'electrical',
+    categoryLabel: {
+      pt: 'Comandos Elétricos & Motores',
+      en: 'Control Panels & Motors',
+      es: 'Cuadros de Mando y Motores',
+    },
+    location: 'Edgar Santana de França / Facilities',
+    date: '2026-06',
+    equipment: ['Contatores WEG CWM25', 'Relés Térmicos RW27D', 'Disjuntor Motor MPW25', 'Chaves Boia Eletromecânicas', 'Canaletas Perfuradas'],
+    standards: ['NBR 5410', 'NR-10', 'NR-12'],
+    description: {
+      pt: 'Montagem estruturada de quadro elétrico de comando com relé de alternância automática para duas bombas de recalque de 5CV. Anilhamento numerado de cabos, botoeiras de comando manual/automático, sinalizadores LED de falha térmica e teste funcional em bancada antes da substituição em campo.',
+      en: 'Structured wiring and assembly of motor control center featuring automatic alternation relay for dual 5HP water booster pumps. Numbered wire ferruling, manual/auto selector switches, LED trip status lamps, and exhaustive bench simulation before field deployment.',
+      es: 'Montaje de cuadro eléctrico con alternancia automática para bombas de agua de 5CV. Identificación numérica de conductores, selectores manual/auto y señalización LED.',
+    },
+    image: 'https://picsum.photos/seed/field-pump-panel/800/600',
+    highlight: true,
+  },
+  {
+    id: 'fa_retrofit_led',
+    title: {
+      pt: 'Retrofit de 180+ Luminárias LED e Lançamento de Eletrocalhas',
+      en: '180+ LED Fixture Retrofit & Galvanized Cable Tray Installation',
+      es: 'Retrofit de 180 Luminarias LED y Tendido de Bandejas Metálicas',
+    },
+    category: 'electrical',
+    categoryLabel: {
+      pt: 'Instalações & Infraestrutura',
+      en: 'Wiring & Infrastructure',
+      es: 'Instalaciones e Infraestructura',
+    },
+    location: 'JLL Serviços de Manutenção Predial',
+    date: '2026-05',
+    equipment: ['Painéis LED 40W 4000K', 'Cabos Prysmian AFumex 2.5mm²', 'Eletrocalhas Galvanizadas Mopa', 'Andaimes Travados NR-35'],
+    standards: ['NR-35', 'NBR 5410', 'NBR 8995-1'],
+    description: {
+      pt: 'Substituição de luminárias fluorescentes antigas por painéis LED de alta eficiência em 3 andares corporativos. Instalação de 120 metros de eletrocalhas aéreas com linha de vida certificada (NR-35), garantindo redução de 58% no consumo elétrico e aumento do iluminamento para 500 lux homogêneo.',
+      en: 'Replaced legacy fluorescent lighting with 40W LED panels across 3 corporate office floors. Installed 120m of overhead cable trays utilizing certified lifelines (NR-35), securing 58% energy savings and uniform 500 lux compliance.',
+      es: 'Sustitución de luminarias antiguas por paneles LED en 3 plantas corporativas. Instalación de 120m de bandejas portacables con línea de vida (NR-35), logrando 58% de ahorro energético.',
+    },
+    image: 'https://picsum.photos/seed/field-led-lighting/800/600',
+    highlight: false,
+  },
+  {
+    id: 'fa_valvulas_hidraulicas',
+    title: {
+      pt: 'Manutenção de Válvulas Redutoras de Pressão (VRP) e Barrilete',
+      en: 'Pressure Reducing Valve (PRV) Overhaul & Hydraulic Header Maintenance',
+      es: 'Mantenimiento de Válvulas Reductoras de Presión y Colector Hidráulico',
+    },
+    category: 'hydraulic',
+    categoryLabel: {
+      pt: 'Hidráulica Predial',
+      en: 'Building Hydraulics',
+      es: 'Fontanería y Red Hidráulica',
+    },
+    location: 'ITC Administração e Hotelaria / JLL',
+    date: '2026-04',
+    equipment: ['Válvulas Pilotadas Bermad 2"', 'Manômetros com Glicerina 0-10 bar', 'Tubulações PPR Termofusão', 'Kits de Vedação e Diafragma'],
+    standards: ['NBR 5626', 'Boas Práticas de Engenharia Predial'],
+    description: {
+      pt: 'Desmontagem técnica de válvulas redutoras de pressão dos andares intermediários para eliminação de golpe de aríete e picos de pressão nas colunas. Substituição de diafragmas de borracha nitrílica, limpeza de filtros piloto e calibração dinâmica para 2.5 bar estável.',
+      en: 'Complete overhaul of intermediate-floor water pressure reducing valves to eliminate dangerous water hammer oscillations. Replaced nitrilic diaphragms, cleaned internal pilot strainers, and calibrated dynamic outlet pressure to a solid 2.5 bar.',
+      es: 'Desmontaje y mantenimiento de válvulas reductoras para eliminar golpes de ariete. Cambio de membranas de estanqueidad, limpieza de filtros piloto y calibración a 2.5 bar.',
+    },
+    image: 'https://picsum.photos/seed/field-valves-plumbing/800/600',
+    highlight: false,
+  },
+  {
+    id: 'fa_piso_epoxi',
+    title: {
+      pt: 'Recuperação de Drywall e Aplicação de Piso Epóxi em Sala Técnica',
+      en: 'Drywall Repair & High-Durability Technical Epoxy Coating in Substation',
+      es: 'Reparación de Drywall y Pintura Epoxi en Sala Técnica',
+    },
+    category: 'civil_painting',
+    categoryLabel: {
+      pt: 'Civil & Pintura Técnica',
+      en: 'Civil & Technical Coating',
+      es: 'Civil y Pintura Epoxi',
+    },
+    location: 'Concrepoxi Engenharia / JLL Facilities',
+    date: '2026-03',
+    equipment: ['Resina Epóxi Poliamida 100% Sólidos', 'Nível a Laser Bosch GLL 3-80', 'Placas Drywall Resistentes à Umidade (RU)', 'Lixadeira com Aspirador'],
+    standards: ['NR-18', 'Padrão Industrial A+'],
+    description: {
+      pt: 'Fechamento de passagens de cabos com drywall acústico e fita telada, lixamento e aplicação de fundo selador epóxi seguido de duas demãos de acabamento antiderrapante em sala de geradores e subestação de média tensão, conferindo resistência a óleos e facilidade de descarte e lavagem.',
+      en: 'Restored partition walls with moisture-resistant drywall, treated cable penetrations with firestop/joint mesh, and applied high-solids polyamide epoxy flooring in generator rooms, producing an oil-resistant, washable, industrial A+ finish.',
+      es: 'Reparación de tabiques de drywall, sellado de pasos de cableado y aplicación de pintura epoxi de alta resistencia en sala de generadores y subestación.',
+    },
+    image: 'https://picsum.photos/seed/field-epoxy-coating/800/600',
+    highlight: false,
+  },
+  {
+    id: 'fa_subestacao_transformador',
+    title: {
+      pt: 'Manobra e Manutenção Preventiva em Transformador a Seco 500kVA',
+      en: '500kVA Dry-Type Transformer Inspection & Medium Voltage Switching',
+      es: 'Maniobra y Mantenimiento Preventivo en Transformador Seco 500kVA',
+    },
+    category: 'electrical',
+    categoryLabel: {
+      pt: 'Média Tensão & Subestações',
+      en: 'Medium Voltage & Substation',
+      es: 'Media Tensión y Subestaciones',
+    },
+    location: 'ATS Serviços Especiais / JLL Facilities',
+    date: '2026-02',
+    equipment: ['Transformador a Seco 500kVA 13.8kV/380V', 'Vara de Manobra Dielétrica 36kV', 'Detector de Tensão por Contato', 'Luvas Dielétricas Classe 2'],
+    standards: ['NR-10 SEP', 'NBR 14039', 'Procedimento de Bloqueio LOTO'],
+    description: {
+      pt: 'Execução de manobra de desenergização e aterramento temporário sob protocolo de segurança NR-10 SEP. Limpeza com ar comprimido seco dos enrolamentos de média e baixa tensão, reaperto de conexões flexíveis e medição de temperatura dos sensores PT100 no painel de proteção térmica.',
+      en: 'De-energization switching and temporary grounding under strict NR-10 SEP high-voltage safety protocol. Performed dry compressed-air cleaning on coils, torque-checked copper terminals, and verified PT100 thermal protection relay sensors on a 500kVA transformer.',
+      es: 'Maniobra de desenergización y puesta a tierra temporal según NR-10 SEP. Limpieza de bobinados con aire comprimido seco, reapriete de terminales y verificación de sondas PT100.',
+    },
+    image: 'https://picsum.photos/seed/field-transformer-substation/800/600',
+    highlight: true,
+  },
+  {
+    id: 'fa_fancoil_climatizacao',
+    title: {
+      pt: 'Manutenção Preventiva em Fancoil 15 TR e Higienização de Filtros',
+      en: '15 TR HVAC Fan Coil Unit Preventive Servicing & Filter Replacement',
+      es: 'Mantenimiento Preventivo de Fancoil 15 TR y Cambio de Filtros',
+    },
+    category: 'hydraulic',
+    categoryLabel: {
+      pt: 'Climatização & Ar-Condicionado',
+      en: 'HVAC & Air Conditioning',
+      es: 'Climatización y Aire Acondicionado',
+    },
+    location: 'JLL Serviços de Manutenção Predial',
+    date: '2026-01',
+    equipment: ['Unidade Fancoil Carrier 15 TR', 'Filtros Descartáveis Classe G4 e Bolsas F7', 'Manifold R410A', 'Bomba de Pressurização de Serpentina'],
+    standards: ['PMOC (Plano de Manutenção, Operação e Controle)', 'Normas ANVISA'],
+    description: {
+      pt: 'Inspeção e higienização química da serpentina com produto biodegradável alcalino, desobstrução da bandeja e dreno de condensado com pastilha bactericida, tensionamento e alinhamento de correias trapezoidais e substituição de filtros de ar G4/F7 em conformidade com o PMOC corporativo.',
+      en: 'Coil chemical cleansing with alkaline bio-detergent, condensate drain descaling with bactericidal tablets, V-belt tensioning/pulley alignment, and air filter replacement conforming to corporate PMOC air-quality compliance.',
+      es: 'Limpieza química de serpentín, desobstrucción de bandeja de condensados con pastillas bactericidas, ajuste de correas y cambio de filtros según normativa PMOC.',
+    },
+    image: 'https://picsum.photos/seed/field-hvac-fancoil/800/600',
+    highlight: false,
+  },
+];
 
 export const DEFAULT_PORTFOLIO_DATA: PortfolioDatabase = {
   personalInfo: {
@@ -368,8 +586,195 @@ export const DEFAULT_PORTFOLIO_DATA: PortfolioDatabase = {
       },
       skills: ['Motores Elétricos', 'Instrumentação', 'Regulagem de Corrente', 'Instalações'],
     },
+    {
+      id: 'jcs_instalacoes',
+      role: {
+        pt: 'Almoxarife Técnico / Apoio de Instalações',
+        en: 'Technical Inventory & Installation Support',
+        es: 'Encargado Técnico de Almacén e Instalaciones',
+      },
+      company: 'JCS INSTALAÇÕES HIDRÁULICAS E ELÉTRICAS LTDA.',
+      location: 'São Paulo - SP',
+      period: {
+        pt: '09/2021 - 01/2022',
+        en: '09/2021 - 01/2022',
+        es: '09/2021 - 01/2022',
+      },
+      duration: {
+        pt: 'Instalações Hidráulicas e Elétricas',
+        en: 'Hydraulic & Electrical Contracting',
+        es: 'Instalaciones Hidráulicas y Eléctricas',
+      },
+      type: {
+        pt: 'Tempo Integral',
+        en: 'Full-time',
+        es: 'Tiempo Completo',
+      },
+      description: {
+        pt: 'Controle, recebimento, conferência técnica e organização de materiais elétricos e hidráulicos para obras de infraestrutura.',
+        en: 'Controlled, inspected, and organized technical electrical and hydraulic supplies for infrastructure sites.',
+        es: 'Control técnico, recepción y organización de suministros eléctricos e hidráulicos para obras.',
+      },
+      achievements: {
+        pt: [
+          'Gestão de estoque técnico de cabos, disjuntores, conexões PPR/PVC e ferramentas especializadas.',
+          'Separação e despacho de kits de montagem para equipes de campo com zero retrabalho.',
+          'Conferência de notas fiscais e especificações técnicas de materiais conforme NBR.',
+        ],
+        en: [
+          'Managed technical inventory of cables, breakers, PPR/PVC fittings, and specialized tools.',
+          'Dispatched installation kits to field teams ensuring zero downtime or missing components.',
+          'Inspected incoming supplies against technical specs and national standards.',
+        ],
+        es: [
+          'Gestión de stock técnico de cables, disyuntores, fontanería y herramientas.',
+          'Preparación y despacho de materiales para cuadrillas de campo.',
+          'Verificación de especificaciones técnicas y albaranes.',
+        ],
+      },
+      skills: ['Almoxarifado Técnico', 'Materiais Elétricos', 'Conexões Hidráulicas', 'Logística de Obras'],
+    },
+    {
+      id: 'concrepoxi',
+      role: {
+        pt: 'Apoio de Infraestrutura & Revestimento Epóxi',
+        en: 'Infrastructure Support & Epoxy Floor Coating',
+        es: 'Auxiliar de Infraestructura y Revestimientos Epoxi',
+      },
+      company: 'CONCREPOXI ENGENHARIA LTDA.',
+      location: 'São Paulo - SP',
+      period: {
+        pt: '08/2020 - 09/2021',
+        en: '08/2020 - 09/2021',
+        es: '08/2020 - 09/2021',
+      },
+      duration: {
+        pt: '1 ano e 1 mês',
+        en: '1 year and 1 month',
+        es: '1 año y 1 mes',
+      },
+      type: {
+        pt: 'Tempo Integral',
+        en: 'Full-time',
+        es: 'Tiempo Completo',
+      },
+      description: {
+        pt: 'Atuação em obras industriais com preparação de substratos, nivelamento e aplicação de revestimentos epóxi e poliuretano de alta resistência.',
+        en: 'Executed industrial floor coating projects, substrate preparation, laser leveling, and high-durability epoxy/polyurethane resin application.',
+        es: 'Preparación de superficies, nivelación y aplicación de revestimientos epoxi y poliuretano industrial.',
+      },
+      achievements: {
+        pt: [
+          'Preparação mecânica de pisos de concreto (lixamento, fresagem e aspiração industrial).',
+          'Aplicação de primers seladores e acabamentos autonivelantes em salas técnicas e indústrias.',
+          'Tratamento de juntas de dilatação estruturais e impermeabilização técnica.',
+        ],
+        en: [
+          'Mechanical concrete surface preparation (grinding, profiling, and industrial dust extraction).',
+          'Applied epoxy primers and self-leveling finishes in technical rooms and industrial plants.',
+          'Treated expansion joints and applied structural technical waterproofing.',
+        ],
+        es: [
+          'Preparación mecánica de suelos de hormigón (fresado, pulido y aspiración).',
+          'Aplicación de imprimaciones epoxi y acabados autonivelantes.',
+          'Tratamiento de juntas de dilatación e impermeabilización.',
+        ],
+      },
+      skills: ['Pintura Epóxi', 'Pisos Industriais', 'Juntas de Dilatação', 'Segurança NR-18'],
+    },
+    {
+      id: 'capanema_moveis',
+      role: {
+        pt: 'Auxiliar de Montagem e Produção',
+        en: 'Assembly & Production Assistant',
+        es: 'Auxiliar de Montaje y Producción',
+      },
+      company: 'CAPANEMA MÓVEIS LTDA.',
+      location: 'São Paulo - SP',
+      period: {
+        pt: '06/2016 - 02/2018',
+        en: '06/2016 - 02/2018',
+        es: '06/2016 - 02/2018',
+      },
+      duration: {
+        pt: '1 ano e 8 meses',
+        en: '1 year and 8 months',
+        es: '1 año y 8 meses',
+      },
+      type: {
+        pt: 'Tempo Integral',
+        en: 'Full-time',
+        es: 'Tiempo Completo',
+      },
+      description: {
+        pt: 'Montagem de estruturas de mobiliário corporativo e residencial, manuseio de ferramentas elétricas manuais e controle de acabamento.',
+        en: 'Assembly of corporate and residential furniture structures, operation of power tools, and finish quality control.',
+        es: 'Montaje de mobiliario corporativo y residencial, manejo de herramientas eléctricas y control de acabados.',
+      },
+      achievements: {
+        pt: [
+          'Operação segura de ferramentas elétricas manuais (parafusadeiras, furadeiras e serras).',
+          'Leitura de plantas de montagem e controle dimensional com precisão milimétrica.',
+        ],
+        en: [
+          'Safe operation of handheld power tools (drills, impact drivers, precision saws).',
+          'Read furniture blueprints with precise dimensional tolerances.',
+        ],
+        es: [
+          'Uso seguro de herramientas eléctricas (atornilladores, taladros).',
+          'Interpretación de planos de montaje.',
+        ],
+      },
+      skills: ['Ferramental Elétrico', 'Montagem Estrutural', 'Leitura de Projetos'],
+    },
+    {
+      id: 'madam_mad',
+      role: {
+        pt: 'Auxiliar de Logística e Cargas',
+        en: 'Logistics & Cargo Assistant',
+        es: 'Auxiliar de Logística y Cargas',
+      },
+      company: 'MADAM MAD TRANSPORTES LTDA.',
+      location: 'São Paulo - SP',
+      period: {
+        pt: '01/2016 - 02/2016',
+        en: '01/2016 - 02/2016',
+        es: '01/2016 - 02/2016',
+      },
+      duration: {
+        pt: 'Operação Logística',
+        en: 'Logistics Operations',
+        es: 'Operación Logística',
+      },
+      type: {
+        pt: 'Temporário',
+        en: 'Temporary',
+        es: 'Temporal',
+      },
+      description: {
+        pt: 'Apoio em carga, descarga e conferência de mercadorias no centro de distribuição.',
+        en: 'Assisted with cargo loading, unloading, and shipping manifest inspections in distribution center.',
+        es: 'Apoyo en carga, descarga y verificación de mercancías en centro de distribución.',
+      },
+      achievements: {
+        pt: [
+          'Conferência física de volumes e organização de paletes de transporte.',
+          'Cumprimento rigoroso de normas de ergonomia e segurança patrimonial.',
+        ],
+        en: [
+          'Physical freight verification and transport pallet staging.',
+          'Strict adherence to ergonomics and warehouse safety protocols.',
+        ],
+        es: [
+          'Verificación de mercancías y organización de palets.',
+          'Normas de seguridad y ergonomía en almacén.',
+        ],
+      },
+      skills: ['Logística', 'Organização de Cargas', 'Ergonomia'],
+    },
   ],
   projects: PROJECTS,
+  fieldActivities: DEFAULT_FIELD_ACTIVITIES,
   skillsMatrix: [
     {
       id: 'fullstack_software',
@@ -677,7 +1082,16 @@ export function getPortfolioData(): PortfolioDatabase {
     try {
       const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
       if (stored) {
-        return JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        return {
+          ...DEFAULT_PORTFOLIO_DATA,
+          ...parsed,
+          fieldActivities: parsed.fieldActivities && parsed.fieldActivities.length > 0 ? parsed.fieldActivities : DEFAULT_PORTFOLIO_DATA.fieldActivities,
+          projects: parsed.projects && parsed.projects.length > 0 ? parsed.projects : DEFAULT_PORTFOLIO_DATA.projects,
+          experiences: parsed.experiences && parsed.experiences.length > 0 ? parsed.experiences : DEFAULT_PORTFOLIO_DATA.experiences,
+          certifications: parsed.certifications && parsed.certifications.length > 0 ? parsed.certifications : DEFAULT_PORTFOLIO_DATA.certifications,
+          skillsMatrix: parsed.skillsMatrix && parsed.skillsMatrix.length > 0 ? parsed.skillsMatrix : DEFAULT_PORTFOLIO_DATA.skillsMatrix,
+        };
       }
     } catch (e) {
       console.warn('Error reading portfolio data from local cache:', e);
