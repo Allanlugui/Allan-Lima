@@ -10,8 +10,14 @@ import {
   RefreshCw,
   Trash2,
   Cloud,
+  ShieldCheck,
 } from 'lucide-react';
-import { uploadImageToGoogleDrive, optimizeImageFile } from '@/lib/google-drive';
+import {
+  uploadImageToGoogleDrive,
+  optimizeImageFile,
+  isDriveConnected,
+  requestGoogleDriveToken,
+} from '@/lib/google-drive';
 
 interface GoogleDriveImageUploadProps {
   currentImageUrl?: string;
@@ -30,12 +36,29 @@ export function GoogleDriveImageUpload({
   const [uploadProgress, setUploadProgress] = useState<string>('');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string>(currentImageUrl || '');
+  const [connected, setConnected] = useState<boolean>(() => isDriveConnected());
   const [isDriveSynced, setIsDriveSynced] = useState<boolean>(
     Boolean(currentImageUrl && (currentImageUrl.includes('googleusercontent.com') || currentImageUrl.includes('drive.google.com')))
   );
 
   const cameraInputRef = useRef<HTMLInputElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleConnectDrive = async () => {
+    setErrorMsg(null);
+    try {
+      setIsUploading(true);
+      setUploadProgress('Conectando ao Google Drive...');
+      await requestGoogleDriveToken(true);
+      setConnected(true);
+      setUploadProgress('Conectado com sucesso ao Google Drive!');
+      setTimeout(() => setIsUploading(false), 1500);
+    } catch (err: unknown) {
+      setIsUploading(false);
+      const msg = err instanceof Error ? err.message : 'Falha ao conectar.';
+      setErrorMsg(`Erro de conexão com Google Drive: ${msg}`);
+    }
+  };
 
   const handleFileSelected = async (file: File) => {
     if (!file || !file.type.startsWith('image/')) {
@@ -48,7 +71,7 @@ export function GoogleDriveImageUpload({
     setUploadProgress('Processando imagem...');
 
     try {
-      // 1. Instant local preview so the user sees their photo with zero delay
+      // 1. Instant local preview
       const { dataUrl } = await optimizeImageFile(file, 1920, 0.88);
       setPreviewUrl(dataUrl);
       onImageChange(dataUrl);
@@ -60,17 +83,17 @@ export function GoogleDriveImageUpload({
       // 3. Update with permanent Google Drive CDN URL
       setPreviewUrl(result.viewUrl);
       setIsDriveSynced(true);
+      setConnected(true);
       onImageChange(result.viewUrl, result.fileId);
       setUploadProgress('Foto salva no Google Drive com sucesso!');
     } catch (err: unknown) {
       console.error('Google Drive Upload Error:', err);
       const message = err instanceof Error ? err.message : 'Falha ao salvar no Google Drive.';
       setErrorMsg(
-        message.includes('Token') || message.includes('autenticação')
-          ? 'Conecte sua conta Google para salvar no Google Drive. A pré-visualização local foi mantida.'
+        message.includes('popup') || message.includes('popup_failed_to_open')
+          ? 'O navegador bloqueou a janela de login do Google. Clique em "Conectar Google Drive" abaixo antes de enviar.'
           : message
       );
-      // Keep local preview if Drive fails
       setIsDriveSynced(false);
     } finally {
       setIsUploading(false);
@@ -103,10 +126,21 @@ export function GoogleDriveImageUpload({
         <label className="block text-xs font-bold text-slate-800 uppercase tracking-wider">
           {label}
         </label>
-        <span className="text-[11px] font-semibold text-blue-700 bg-blue-50 px-2 py-0.5 rounded flex items-center gap-1">
-          <Cloud className="w-3 h-3 text-blue-600" />
-          <span>Google Drive</span>
-        </span>
+        {connected ? (
+          <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 border border-emerald-200 px-2.5 py-1 rounded-lg flex items-center gap-1.5 shadow-2xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>Google Drive Conectado</span>
+          </span>
+        ) : (
+          <button
+            type="button"
+            onClick={handleConnectDrive}
+            className="text-[11px] font-bold text-white bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded-lg flex items-center gap-1.5 shadow-xs transition-colors cursor-pointer"
+          >
+            <Cloud className="w-3.5 h-3.5" />
+            <span>Conectar Google Drive</span>
+          </button>
+        )}
       </div>
 
       {/* Hidden Native File Inputs */}

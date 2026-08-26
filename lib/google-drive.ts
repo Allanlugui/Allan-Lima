@@ -50,6 +50,13 @@ export function getCachedDriveToken(): string | null {
 }
 
 /**
+ * Returns true if a valid cached Google Drive access token exists
+ */
+export function isDriveConnected(): boolean {
+  return Boolean(getCachedDriveToken());
+}
+
+/**
  * Saves Google Drive token in session storage
  */
 export function saveDriveToken(token: string, expiresInSeconds: number = 3500) {
