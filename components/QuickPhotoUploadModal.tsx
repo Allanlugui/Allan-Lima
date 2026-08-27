@@ -13,9 +13,10 @@ import {
 } from 'lucide-react';
 import { FieldActivityItem, savePortfolioData, getPortfolioData } from '@/lib/portfolio-store';
 import { Language } from '@/lib/portfolio-data';
-import { GoogleDriveImageUpload } from '@/components/GoogleDriveImageUpload';
+import { DatabaseImageUpload } from '@/components/DatabaseImageUpload';
 
 interface QuickPhotoUploadModalProps {
+
   isOpen: boolean;
   onClose: () => void;
   currentLang: Language;
@@ -127,15 +128,15 @@ export function QuickPhotoUploadModal({
             <div>
               <h2 className="text-base sm:text-lg font-bold text-slate-900 leading-tight">
                 {currentLang === 'pt'
-                  ? 'Nova Foto de Campo & Google Drive'
+                  ? 'Nova Foto de Campo (Salva no Banco de Dados)'
                   : currentLang === 'es'
-                  ? 'Nueva Foto de Campo y Google Drive'
-                  : 'New Field Photo & Google Drive'}
+                  ? 'Nueva Foto de Campo (Base de Datos)'
+                  : 'New Field Photo (Saved to Database)'}
               </h2>
               <p className="text-xs text-slate-500">
                 {currentLang === 'pt'
-                  ? 'Envie diretamente da câmera ou dos arquivos do seu celular'
-                  : 'Send directly from mobile camera or files'}
+                  ? 'Foto permanente no banco de dados e visível a todos os visitantes'
+                  : 'Permanent photo saved to database, visible to all visitors'}
               </p>
             </div>
           </div>
@@ -149,8 +150,8 @@ export function QuickPhotoUploadModal({
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 sm:space-y-5 flex-1">
-          {/* Direct Camera / Files Google Drive Upload Component */}
-          <GoogleDriveImageUpload
+          {/* Direct Camera / Files Database Upload Component */}
+          <DatabaseImageUpload
             currentImageUrl={imageUrl}
             titleHint={title || 'foto_campo'}
             label={

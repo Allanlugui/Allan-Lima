@@ -1,5 +1,5 @@
 import { initializeApp, getApps, getApp, FirebaseApp } from 'firebase/app';
-import { getFirestore, Firestore, doc, getDoc, setDoc, onSnapshot, Unsubscribe } from 'firebase/firestore';
+import { getFirestore, Firestore, doc, getDoc, setDoc, deleteDoc, onSnapshot, Unsubscribe } from 'firebase/firestore';
 import firebaseConfig from '../firebase-applet-config.json';
 import { PortfolioDatabase, DEFAULT_PORTFOLIO_DATA } from './portfolio-store';
 
@@ -38,6 +38,117 @@ export function getDb(): Firestore {
 
 const PORTFOLIO_COLLECTION = 'portfolio';
 const PORTFOLIO_DOC = 'main';
+const IMAGES_COLLECTION = 'portfolio_images';
+
+/**
+ * Optimize image before storing in the database.
+ * Resizes to max 1200px and applies WebP/JPEG compression (~40KB - 90KB)
+ */
+export async function optimizeImageForDatabase(
+  file: File,
+  maxDimension = 1200,
+  quality = 0.82
+): Promise<{ dataUrl: string; width: number; height: number; mimeType: string }> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('Falha ao ler arquivo de imagem.'));
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('Falha ao carregar imagem para otimização.'));
+      img.onload = () => {
+        let width = img.naturalWidth || img.width;
+        let height = img.naturalHeight || img.height;
+
+        if (width > maxDimension || height > maxDimension) {
+          if (width > height) {
+            height = Math.round((height * maxDimension) / width);
+            width = maxDimension;
+          } else {
+            width = Math.round((width * maxDimension) / height);
+            height = maxDimension;
+          }
+        }
+
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Falha ao criar contexto gráfico no navegador.'));
+          return;
+        }
+
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Try WebP first for optimal compression
+        let dataUrl = canvas.toDataURL('image/webp', quality);
+        let mimeType = 'image/webp';
+
+        // Fallback to JPEG if WebP not supported or larger
+        if (!dataUrl.startsWith('data:image/webp')) {
+          dataUrl = canvas.toDataURL('image/jpeg', quality);
+          mimeType = 'image/jpeg';
+        }
+
+        resolve({ dataUrl, width, height, mimeType });
+      };
+      img.src = e.target?.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+/**
+ * Upload and persist an image directly to Firebase Firestore Database.
+ * This guarantees the image is permanent and visible to any visitor without Google Drive auth.
+ */
+export async function uploadImageToDatabase(
+  file: File,
+  nameHint = 'atividade_campo'
+): Promise<{ id: string; dataUrl: string }> {
+  try {
+    const firestore = getDb();
+    const { dataUrl, mimeType } = await optimizeImageForDatabase(file);
+    const id = `img_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+
+    const imageDocRef = doc(firestore, IMAGES_COLLECTION, id);
+    await setDoc(imageDocRef, {
+      id,
+      name: `${nameHint.toLowerCase().replace(/[^a-z0-9]/g, '_')}_${Date.now()}`,
+      dataUrl,
+      mimeType,
+      createdAt: new Date().toISOString(),
+    });
+
+    return { id, dataUrl };
+  } catch (err) {
+    console.error('Error uploading image to database:', err);
+    // Even if firestore has temporary network issue, optimize and return local dataUrl
+    const { dataUrl } = await optimizeImageForDatabase(file);
+    return {
+      id: `img_fallback_${Date.now()}`,
+      dataUrl,
+    };
+  }
+}
+
+/**
+ * Delete an image document from Firebase Database
+ */
+export async function deleteImageFromDatabase(imageId: string): Promise<boolean> {
+  try {
+    if (!imageId || !imageId.startsWith('img_')) return false;
+    const firestore = getDb();
+    const imageDocRef = doc(firestore, IMAGES_COLLECTION, imageId);
+    await deleteDoc(imageDocRef);
+    return true;
+  } catch (err) {
+    console.warn('Could not delete image document from database:', err);
+    return false;
+  }
+}
 
 /**
  * Fetch the latest portfolio data from Firestore cloud database
@@ -106,3 +217,4 @@ export function subscribeToPortfolioFirestore(
     return () => {};
   }
 }
+

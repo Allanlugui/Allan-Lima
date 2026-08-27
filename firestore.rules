@@ -7,9 +7,16 @@ service cloud.firestore {
       allow write: if true;
     }
     
+    // Uploaded portfolio images saved directly in the database
+    match /portfolio_images/{document=**} {
+      allow read: if true;
+      allow write: if true;
+    }
+    
     // Default deny for any other collections
     match /{document=**} {
       allow read, write: if false;
     }
   }
 }
+

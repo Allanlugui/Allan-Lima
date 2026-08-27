@@ -40,8 +40,8 @@ import {
   DEFAULT_PORTFOLIO_DATA,
 } from '@/lib/portfolio-store';
 import { Language, ProfessionalReferenceItem } from '@/lib/portfolio-data';
-import { GoogleDriveImageUpload } from '@/components/GoogleDriveImageUpload';
-import { deleteFileFromGoogleDrive } from '@/lib/google-drive';
+import { DatabaseImageUpload } from '@/components/DatabaseImageUpload';
+import { deleteImageFromDatabase } from '@/lib/firebase';
 
 interface AdminDashboardProps {
   initialData: PortfolioDatabase;
@@ -112,16 +112,16 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
 
   const handleDeleteFieldActivity = async (id: string) => {
     const itemToDelete = (data.fieldActivities || []).find((item) => item.id === id);
-    if (confirm('Tem certeza de que deseja excluir este registro fotográfico de campo e apagar a foto correspondente do Google Drive?')) {
+    if (confirm('Tem certeza de que deseja excluir este registro fotográfico de campo?')) {
       if (itemToDelete?.image) {
         try {
-          await deleteFileFromGoogleDrive(itemToDelete.image);
+          await deleteImageFromDatabase(itemToDelete.id);
         } catch (err) {
-          console.warn('Could not delete file from Google Drive:', err);
+          console.warn('Could not delete image from database:', err);
         }
       }
       const updated = (data.fieldActivities || []).filter((item) => item.id !== id);
-      persistChanges({ ...data, fieldActivities: updated }, 'Registro de campo e arquivo do Google Drive removidos com sucesso.');
+      persistChanges({ ...data, fieldActivities: updated }, 'Registro fotográfico removido com sucesso do Banco de Dados.');
     }
   };
 
@@ -757,11 +757,11 @@ export function AdminDashboard({ initialData, onLogout, onClose }: AdminDashboar
                       </div>
 
                       <form onSubmit={handleSaveFieldActivity} className="space-y-4">
-                        {/* Direct Mobile Camera & Files Upload via Google Drive */}
-                        <GoogleDriveImageUpload
+                        {/* Direct Mobile Camera & Files Upload to Database */}
+                        <DatabaseImageUpload
                           currentImageUrl={editingFieldActivity.image}
                           titleHint={editingFieldActivity.title.pt || 'foto_campo'}
-                          label="Foto da Atividade (Câmera do Celular ou Galeria)"
+                          label="Foto da Atividade (Salva no Banco de Dados)"
                           onImageChange={(imageUrl) => {
                             setEditingFieldActivity({
                               ...editingFieldActivity,

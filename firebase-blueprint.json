@@ -1,0 +1,43 @@
+{
+  "entities": {
+    "Portfolio": {
+      "title": "Portfolio Database",
+      "description": "Stores the portfolio content, activities, projects, experiences, and references",
+      "type": "object",
+      "properties": {
+        "personalInfo": { "type": "object" },
+        "fieldActivities": { "type": "array" },
+        "projects": { "type": "array" },
+        "experiences": { "type": "array" },
+        "skillsMatrix": { "type": "array" },
+        "certifications": { "type": "array" },
+        "blogPosts": { "type": "array" },
+        "education": { "type": "array" },
+        "references": { "type": "array" },
+        "lastUpdated": { "type": "string" }
+      }
+    },
+    "PortfolioImage": {
+      "title": "Portfolio Image",
+      "description": "Stores uploaded images directly in the Firebase database as persistent base64 data",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "dataUrl": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "dataUrl"]
+    }
+  },
+  "firestore": {
+    "/portfolio/{docId}": {
+      "schema": "Portfolio",
+      "description": "Main portfolio documents"
+    },
+    "/portfolio_images/{imageId}": {
+      "schema": "PortfolioImage",
+      "description": "Uploaded persistent images saved directly in the database"
+    }
+  }
+}
